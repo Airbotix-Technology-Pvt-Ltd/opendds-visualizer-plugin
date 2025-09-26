@@ -1,70 +1,88 @@
-#ifndef _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_FASTDDS_READERHANDLER_HPP_
-#define _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_FASTDDS_READERHANDLER_HPP_
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Licensed under the GNU General Public License v3.0.
+
+#ifndef READER_HANDLER_HPP
+#define READER_HANDLER_HPP
 
 #include <atomic>
-#include <nlohmann/json.hpp>
-#include <dds/DCPS/DataReaderImpl.h>
-#include <dds/DCPS/TopicImpl.h>
-#include <dds/DCPS/LocalObject.h>
-#include <dds/DCPS/Marked_Default_Qos.h>
-#include <dds/DCPS/Service_Participant.h>
-#include <dds/DdsDcpsPublicationC.h>
-#include <dds/DdsDcpsInfrastructureC.h>
+#include <map>
+#include <string>
+#include <vector>
+#include <dds/DdsDcpsSubscriptionC.h>
 #include <dds/DCPS/XTypes/DynamicDataImpl.h>
-#include <dds/DCPS/XTypes/DynamicTypeImpl.h>
 #include "FastDdsListener.hpp"
 #include "utils/DataTypeConfiguration.hpp"
-#include "utils/dynamic_types_utils.hpp"
 #include "utils/types.hpp"
-#include "utils/Logger.cpp"
 
 namespace eprosima {
 namespace plotjuggler {
 namespace fastdds {
 
-struct ReaderHandler : public OpenDDS::DCPS::LocalObject<DDS::DataReaderListener>
+class ReaderHandler : public DDS::DataReaderListener
 {
 public:
     ReaderHandler(
-        DDS::Topic_var topic,
-        DDS::DataReader_var datareader,
-        DDS::DynamicType_ptr type,
-        FastDdsListener* listener,
-        const DataTypeConfiguration& data_type_configuration);
+            DDS::Topic_var topic,
+            DDS::DataReader_var reader,
+            DDS::DynamicType_ptr type,
+            FastDdsListener* listener,
+            const DataTypeConfiguration& config);
 
-    virtual ~ReaderHandler();
+    ~ReaderHandler();
 
     ReaderHandler& operator=(ReaderHandler&& other);
-    ReaderHandler& operator=(const ReaderHandler& other);
+    ReaderHandler& operator=(const ReaderHandler& other) = delete;
 
     void stop();
 
-    void on_data_available(DDS::DataReader* reader) override;
+    DDS::DataReader_var get_reader() const { return reader_; }
+    DDS::Topic_var get_topic() const { return topic_; }
 
-    std::string topic_name() const;  // Changed to std::string
-    std::string type_name() const;   // Changed to std::string
+    void on_requested_deadline_missed(
+            DDS::DataReader_ptr,
+            const DDS::RequestedDeadlineMissedStatus&) override;
+
+    void on_requested_incompatible_qos(
+            DDS::DataReader_ptr,
+            const DDS::RequestedIncompatibleQosStatus&) override;
+
+    void on_sample_rejected(
+            DDS::DataReader_ptr,
+            const DDS::SampleRejectedStatus&) override;
+
+    void on_liveliness_changed(
+            DDS::DataReader_ptr,
+            const DDS::LivelinessChangedStatus&) override;
+
+    void on_data_available(DDS::DataReader_ptr) override;
+
+    void on_subscription_matched(
+            DDS::DataReader_ptr,
+            const DDS::SubscriptionMatchedStatus&) override;
+
+    void on_sample_lost(
+            DDS::DataReader_ptr,
+            const DDS::SampleLostStatus&) override;
 
     std::vector<types::DatumLabel> numeric_data_series_names() const;
     std::vector<types::DatumLabel> string_data_series_names() const;
 
 protected:
-    void create_data_structures_(DDS::DynamicData_ptr data = nullptr);
+    void create_data_structures_();
 
-    static DDS::StatusMask default_listener_mask_();
-
-    FastDdsListener* listener_;
     DDS::Topic_var topic_;
     DDS::DataReader_var reader_;
     DDS::DynamicType_ptr type_;
-    DDS::DynamicData_ptr data_;
-    std::atomic<bool> stop_;
-    utils::TypeIntrospectionNumericStruct numeric_data_info_;
-    utils::TypeIntrospectionStringStruct string_data_info_;
+    FastDdsListener* listener_;
     DataTypeConfiguration data_type_configuration_;
+    void* data_;
+    std::atomic<bool> stop_;
+    std::map<std::string, std::string> numeric_data_info_;
+    std::map<std::string, std::string> string_data_info_;
 };
 
 } /* namespace fastdds */
 } /* namespace plotjuggler */
 } /* namespace eprosima */
 
-#endif // _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_FASTDDS_READERHANDLER_HPP_
+#endif // READER_HANDLER_HPP

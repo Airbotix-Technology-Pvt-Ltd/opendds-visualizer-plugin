@@ -1,19 +1,5 @@
 // Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
-//
-// This file is part of eProsima Fast DDS Visualizer Plugin.
-//
-// eProsima Fast DDS Visualizer Plugin is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// eProsima Fast DDS Visualizer Plugin is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with eProsima Fast DDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
+// Licensed under the GNU General Public License v3.0.
 
 /**
  * @file Participant.hpp
@@ -24,24 +10,22 @@
 
 #include <functional>
 #include <memory>
+#include <string>
 #include <unordered_map>
 #include <QObject>
 
-// #include <fastdds/dds/domain/DomainParticipant.hpp>
-// #include <fastdds/dds/domain/DomainParticipantListener.hpp>
-// #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
-// #include <fastdds/dds/subscriber/DataReader.hpp>
-// #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-// #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
-// #include <fastdds/dds/subscriber/Subscriber.hpp>
-// #include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp>
-
-// #include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
-// #include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
-
+#include <dds/DdsDcpsDomainC.h>
+#include <dds/DdsDcpsSubscriptionC.h>
+#include <dds/DdsDcpsPublicationC.h>
+#include <dds/DCPS/Service_Participant.h>
+#include <dds/DCPS/DCPS_Utils.h>
+#include "utils/utils.hpp"
+#include "utils/Exception.hpp"
+#include "utils/DataTypeConfiguration.hpp"
 #include "FastDdsListener.hpp"
 #include "ReaderHandler.hpp"
 #include "TopicDataBase.hpp"
+#include "utils/Logger.cpp"
 
 namespace eprosima {
 namespace plotjuggler {
@@ -50,16 +34,13 @@ namespace fastdds {
 class ReaderHandlerDeleter
 {
 public:
-
     ReaderHandlerDeleter(
             DDS::DomainParticipant* participant,
             DDS::Subscriber* subscriber);
 
-    void operator ()(
-            ReaderHandler* ptr) const;
+    void operator()(ReaderHandler* ptr) const;
 
 protected:
-
     DDS::DomainParticipant_var participant_;
     DDS::Subscriber_var subscriber_;
 };
@@ -67,22 +48,14 @@ protected:
 using ReaderHandlerReference = std::unique_ptr<ReaderHandler, ReaderHandlerDeleter>;
 
 /**
- * @brief This class handles every Fast DDS entity required.
+ * @brief This class handles every OpenDDS entity required.
  *
- * It create, manage and destroy every Fast DDS entity that the process requires to instantiate.
+ * It creates, manages, and destroys every OpenDDS entity that the process requires to instantiate.
  * The discovery and user data received is transmitted through a FastDdsListener object.
- *
- * FUTURE WORK:
- * Use a specific thread to call callbacks instead of using Fast DDS thread
  */
 class Participant : public DDS::DomainParticipantListener
 {
 public:
-
-    ////////////////////////////////////////////////////
-    // CREATION & DESTRUCTION
-    ////////////////////////////////////////////////////
-
     Participant(
             DDS::DomainId_t domain_id,
             std::shared_ptr<TopicDataBase> discovery_database,
@@ -90,61 +63,42 @@ public:
 
     virtual ~Participant();
 
-
-    ////////////////////////////////////////////////////
-    // INTERACTION METHODS
-    ////////////////////////////////////////////////////
-
-    bool register_type_from_xml(
-            const std::string& xml_path);
+    bool register_type_from_xml(const std::string& xml_path);
 
     void create_subscription(
             const std::string& topic_name,
             const DataTypeConfiguration& data_type_configuration);
 
+    // DDS::DomainParticipantListener methods
+    void on_publication_matched(
+            DDS::DataWriter_ptr writer,
+            const DDS::PublicationMatchedStatus& info) override;
 
-    ////////////////////////////////////////////////////
-    // LISTENER [ DOMAIN PARTICIPANT ] METHODS
-    ////////////////////////////////////////////////////
-
-    void on_data_writer_discovery(
-            DDS::DomainParticipant* participant,
-            eprosima::fastdds::rtps::WriterDiscoveryStatus reason,
-            const eprosima::fastdds::rtps::PublicationBuiltinTopicData& info,
-            bool& should_be_ignored) override;
-
-    ////////////////////////////////////////////////////
-    // RETRIEVE INFORMATION METHODS
-    ////////////////////////////////////////////////////
+    void on_data_available(DDS::DataReader_ptr) override {}
+    void on_requested_deadline_missed(DDS::DataReader_ptr, const DDS::RequestedDeadlineMissedStatus&) override {}
+    void on_requested_incompatible_qos(DDS::DataReader_ptr, const DDS::RequestedIncompatibleQosStatus&) override {}
+    void on_sample_rejected(DDS::DataReader_ptr, const DDS::SampleRejectedStatus&) override {}
+    void on_liveliness_changed(DDS::DataReader_ptr, const DDS::LivelinessChangedStatus&) override {}
+    void on_subscription_matched(DDS::DataReader_ptr, const DDS::SubscriptionMatchedStatus&) override {}
+    void on_sample_lost(DDS::DataReader_ptr, const DDS::SampleLostStatus&) override {}
 
     std::vector<types::DatumLabel> numeric_data_series_names() const;
 
     std::vector<types::DatumLabel> string_data_series_names() const;
 
 protected:
-
-    ////////////////////////////////////////////////////
-    // EXTERNAL EVENT METHODS
-    ////////////////////////////////////////////////////
-
-    // This method is called when a new topic is discovered and type information is not available
     void on_topic_discovery_(
             const std::string& topic_name,
             const std::string& type_name);
 
-    // This method is called when a new topic is discovered and type information is available
     void on_topic_discovery_(
             const std::string& topic_name,
             const std::string& type_name,
             const DataTypeId& type_id);
 
-    ////////////////////////////////////////////////////
-    // AUXILIAR METHODS
-    ////////////////////////////////////////////////////
-
     DDS::ReturnCode_t get_type_support_from_xml_(
             const std::string& type_name,
-            DDS::TypeSupport& type_support);
+            DDS::TypeSupport_var& type_support);
 
     void check_type_info(
             const std::string& topic_name,
@@ -155,10 +109,6 @@ protected:
     bool is_type_registered_in_participant_(
             const std::string& type_name);
 
-    ////////////////////////////////////////////////////
-    // AUXILIAR STATIC METHODS
-    ////////////////////////////////////////////////////
-
     static DDS::DomainParticipantQos default_participant_qos_();
 
     static DDS::SubscriberQos default_subscriber_qos_();
@@ -167,45 +117,16 @@ protected:
 
     static DDS::DataReaderQos default_datareader_qos_();
 
-    /**
-     * @brief Get default mask
-     *
-     * Callbacks accepted by this mask:
-     * - Every DomainParticipantListener callback (cannot be disabled)
-     *
-     * @note it is important to have a mask, otherwise onDataOnReaders would hide on_data_available
-     *
-     * @return DDS::StatusMask with callbacks needed
-     */
     static DDS::StatusMask default_listener_mask_();
 
-
-    ////////////////////////////////////////////////////
-    // INTERNAL VARIABLES
-    ////////////////////////////////////////////////////
-
     std::shared_ptr<TopicDataBase> discovery_database_;
-    std::shared_ptr<TopicIds> dyn_types_info_ = std::make_shared<TopicIds>();
+    std::shared_ptr<TopicIds> dyn_types_info_;
     FastDdsListener* listener_;
 
-
-    ////////////////////////////////////////////////////
-    // FAST DDS POINTERS
-    ////////////////////////////////////////////////////
-
-    //! Internal Factory reference
     DDS::DomainParticipantFactory_var factory_;
-    //! Internal DomainParticipant reference
     DDS::DomainParticipant_var participant_;
-    //! Internal Subscriber reference (only one for every DataReader)
     DDS::Subscriber_var subscriber_;
-
-    /**
-     * Collection created in Participant indexed by topic name that contains
-     * Reader, Topic and DataType so messages read is disengaged from this object
-     */
     std::unordered_map<std::string, ReaderHandlerReference> readers_;
-
 };
 
 } /* namespace fastdds */
