@@ -23,10 +23,10 @@
 #define _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_UTILS_DYNAMICTYPESUTILS_HPP_
 
 #include <dds/DCPS/XTypes/DynamicDataImpl.h>
+#include <nlohmann/json.hpp>
 
 #include "utils/DataTypeConfiguration.hpp"
 #include "utils/types.hpp"
-#include "utils/Logger.cpp"
 
 namespace eprosima {
 namespace plotjuggler {
