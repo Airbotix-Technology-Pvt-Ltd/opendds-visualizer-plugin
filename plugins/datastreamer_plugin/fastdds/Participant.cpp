@@ -19,10 +19,10 @@
  * @file Participant.hpp
  */
 
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
-#include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
+// #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+// #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
+// #include <fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp>
+// #include <fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp>
 
 #include "Participant.hpp"
 #include "utils/utils.hpp"
@@ -32,8 +32,8 @@ namespace eprosima {
 namespace plotjuggler {
 namespace fastdds {
 
-using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastdds::rtps;
+using namespace DDS;
+using namespace OpenDDS::DCPS;
 
 ////////////////////////////////////////////////////
 // READERHANDLER DELETER
@@ -69,14 +69,27 @@ Participant::Participant(
     : listener_(listener)
     , discovery_database_(discovery_database)
 {
-    // TODO check entities are created correctly
+    std::string dds_root = env;
+    std::string d2_str = dds_root + "/rtps.ini";
 
-    // Create Domain Participant
-    participant_ = DomainParticipantFactory::get_instance()->create_participant(
-        domain_id,
-        default_participant_qos_(),
-        this,
-        default_listener_mask_());
+    // Make a modifiable C-string from d2_str
+    char *d2 = new char[d2_str.length() + 1];
+    std::strcpy(d2, d2_str.c_str());
+
+    int dds_argc = 2;
+    char d1[] = "-DCPSConfigFile";
+    char *dds_argv[] = {d1, d2};
+
+    factory_ = TheParticipantFactoryWithArgs(dds_argc, dds_argv);
+
+    if (!factory_)
+    {
+        delete[] d2;
+        DDS_CRITICAL(get_dds_log_prefix(), "Failed to get DomainParticipantFactory");
+        throw std::runtime_error("Failed to get DomainParticipantFactory");
+    }
+
+    participant_ = factory_->create_participant(domainId, PARTICIPANT_QOS_DEFAULT, nullptr, OpenDDS::DCPS::DEFAULT_STATUS_MASK);
 
     if (!participant_)
     {
@@ -86,13 +99,12 @@ Participant::Participant(
     DEBUG("Participant created in domain " << domain_id << " with guid: " << participant_->guid());
 
     // Create Subscriber without listener
-    subscriber_ = participant_->create_subscriber(
-        default_subscriber_qos_());
+    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr, OpenDDS::DCPS::DEFAULT_STATUS_MASK);
 
     if (!subscriber_)
     {
         // Delete participant
-        DomainParticipantFactory::get_instance()->delete_participant(participant_);
+        factory_->delete_participant(participant_);
         participant_ = nullptr;
 
         throw InitializationException("Error creating Subscriber");
@@ -106,21 +118,15 @@ Participant::~Participant()
     // If participant exist, destroy it and its subentities
     if (participant_)
     {
-        // If subscriber exist, destroy it and its subentities
-        if (subscriber_)
+        // Clean up current resources
+        if (participant_)
         {
-            // Eliminate reader handlers (smart ptr deleter will handle it)
-            readers_.clear();
-
-            // Reader and Topic are destroyed by smart ptr
-            // TODO: check if stop is required before
-
-            // Destroy subscriber
-            participant_->delete_subscriber(subscriber_);
+            participant_->delete_contained_entities();
         }
-
-        // Destroy participant
-        eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->delete_participant(participant_);
+        if (factory_ && participant_)
+        {
+            factory_->delete_participant(participant_);
+        }
     }
 
     // The rest of maps and variables are destroyed by themselves
@@ -134,7 +140,7 @@ Participant::~Participant()
 bool Participant::register_type_from_xml(
         const std::string& xml_path)
 {
-    if (RETCODE_OK != DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_path))
+    if (DDS::RETCODE_OK != DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_path))
     {
         WARNING("Error loading XML file: " << xml_path);
         throw IncorrectParamException("Failed reading XML file: " + xml_path);
@@ -171,7 +177,7 @@ void Participant::create_subscription(
     }
 
     DataTypeNameType type_name = discovery_database_->operator [](topic_name).first;
-    DynamicType::_ref_type dyn_type;
+    DDS::DynamicType_ptr dyn_type;
 
     // Check if type info is available
     if (discovery_database_->operator [](topic_name).second == false)
@@ -193,10 +199,10 @@ void Participant::create_subscription(
 
         // Get Dyn Type and register discovered type
         xtypes::TypeObject type_object;
-        if (RETCODE_OK != DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
+        if (DDS::RETCODE_OK != DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
                     type_id, type_object))
         {
-            EPROSIMA_LOG_ERROR(PARTICIPANT, "Error getting type object for type " << type_name);
+            DDS_ERROR(PARTICIPANT, "Error getting type object for type " << type_name);
             return;
         }
         dyn_type = DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(
@@ -212,14 +218,14 @@ void Participant::create_subscription(
         // 1. Type info has been discovered and registered by another participant. In this case, the type Id has been saved in dyn_types_info_
         // 2. Type info has been loaded manually (through XML file) and registered in participant. Info not saved in dyn_types_info_
 
-        if (dyn_types_info_->find(topic_name) != dyn_types_info_->end())
+        if (dyn_types_info_->find() != dyn_types_info_->end())
         {
             DataTypeId type_id = dyn_types_info_->operator [](topic_name).second;
             xtypes::TypeObject type_object;
-            if (RETCODE_OK != DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
+            if (DDS::RETCODE_OK != DomainParticipantFactory::get_instance()->type_object_registry().get_type_object(
                         type_id, type_object))
             {
-                EPROSIMA_LOG_ERROR(PARTICIPANT, "Error getting type object for type " << type_name);
+                DDS_ERROR(PARTICIPANT, "Error getting type object for type " << type_name);
                 return;
             }
             dyn_type = DynamicTypeBuilderFactory::get_instance()->create_type_w_type_object(
@@ -228,41 +234,51 @@ void Participant::create_subscription(
         else
         {
             DynamicTypeBuilder::_ref_type dyn_type_builder;
-            ReturnCode_t ret = DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name(
+            DDS::ReturnCode_t ret = DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name(
                 type_name, dyn_type_builder);
 
-            if (RETCODE_OK != ret)
+            if (DDS::RETCODE_OK != ret)
             {
-                EPROSIMA_LOG_ERROR(PARTICIPANT, "Error getting DynamicTypeBuilder from XML");
+                DDS_ERROR(PARTICIPANT, "Error getting DynamicTypeBuilder from XML");
                 return;
             }
             dyn_type = dyn_type_builder->build();
         }
     }
 
+    // type name
+    ts_ = Traits::GetTypeSupport();
+    CORBA::String_var type_name = ts_->get_type_name();
+
     // Create topic
-    eprosima::fastdds::dds::Topic* topic = participant_->create_topic(
-        topic_name,
-        type_name,
-        default_topic_qos_());
+    DDS::Topic* topic = participant_->create_topic(
+    topic_name.c_str(),
+    type_name.in(),
+    qos_,
+    nullptr,
+    OpenDDS::DCPS::DEFAULT_STATUS_MASK);
 
     if (!topic)
     {
-        EPROSIMA_LOG_ERROR(PARTICIPANT, "Error creating topic " << topic_name);
+        DDS_ERROR(PARTICIPANT, "Error creating topic " << topic_name);
         return;
     }
 
+    drl_ = new DataReaderListenerImpl<Traits>(participant_, topic);
+
     // Create datareader
-    eprosima::fastdds::dds::DataReader* datareader = subscriber_->create_datareader(
-        topic,
-        default_datareader_qos_(),
-        this);     // Mask not required
+    DDS::DataReader_var datareader = sub_->create_datareader(
+            topic.get(), 
+            default_datareader_qos_(), 
+            drl_, 
+            OpenDDS::DCPS::DEFAULT_STATUS_MASK);
 
     if (!datareader)
     {
-        EPROSIMA_LOG_ERROR(PARTICIPANT, "Error creating datareader for topic " << topic_name);
+        DDS_ERROR(PARTICIPANT, "Error creating datareader for topic " << topic_name);
         return;
     }
+
     // Create Reader Handler with all this information and add it to readers
     // Create it with specific deleter for reader and topic
     ReaderHandlerReference new_reader(
@@ -425,24 +441,24 @@ std::vector<types::DatumLabel> Participant::string_data_series_names() const
 // AUXILIAR METHODS
 ////////////////////////////////////////////////////
 
-ReturnCode_t Participant::get_type_support_from_xml_(
+DDS::ReturnCode_t Participant::get_type_support_from_xml_(
         const std::string& type_name,
         TypeSupport& type_support)
 {
     DynamicTypeBuilder::_ref_type dyn_type_builder;
-    ReturnCode_t ret = DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name(type_name,
+    DDS::ReturnCode_t ret = DomainParticipantFactory::get_instance()->get_dynamic_type_builder_from_xml_by_name(type_name,
                     dyn_type_builder);
 
-    if (RETCODE_OK != ret)
+    if (DDS::RETCODE_OK != ret)
     {
-        EPROSIMA_LOG_ERROR(PARTICIPANT, "Error getting DynamicTypeBuilder from XML");
+        DDS_ERROR(PARTICIPANT, "Error getting DynamicTypeBuilder from XML");
         return ret;
     }
     // TODO (Carlosespicur): Check if it can be done simpler
-    DynamicType::_ref_type dyn_type = dyn_type_builder->build();
+    DDS::DynamicType_ptr dyn_type = dyn_type_builder->build();
     TypeSupport dyn_type_type_support(new DynamicPubSubType(dyn_type));
     type_support = dyn_type_type_support;
-    return RETCODE_OK;
+    return DDS::RETCODE_OK;
 }
 
 void Participant::check_type_info(
@@ -451,7 +467,7 @@ void Participant::check_type_info(
 {
     // Check if type info has been loaded manually (though XML file). In this case, register it and update discovery database
     TypeSupport type_support;
-    if (RETCODE_OK != get_type_support_from_xml_(type_name, type_support))
+    if (DDS::RETCODE_OK != get_type_support_from_xml_(type_name, type_support))
     {
         EPROSIMA_LOG_WARNING(PARTICIPANT, "type information of" << type_name << "is currently not available...");
         discovery_database_->operator [](topic_name) = {type_name, false};
@@ -501,10 +517,10 @@ void Participant::refresh_types_registered_()
 // AUXILIAR STATIC METHODS
 ////////////////////////////////////////////////////
 
-eprosima::fastdds::dds::DomainParticipantQos Participant::default_participant_qos_()
+DDS::DomainParticipantQos Participant::default_participant_qos_()
 {
-    eprosima::fastdds::dds::DomainParticipantQos qos =
-            eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT;
+    DDS::DomainParticipantQos qos =
+            DDS::PARTICIPANT_QOS_DEFAULT;
 
     // Set Generic Name
     qos.name("PlotJuggler_FastDDSPlugin_Participant");
@@ -515,33 +531,33 @@ eprosima::fastdds::dds::DomainParticipantQos Participant::default_participant_qo
     return qos;
 }
 
-eprosima::fastdds::dds::SubscriberQos Participant::default_subscriber_qos_()
+DDS::SubscriberQos Participant::default_subscriber_qos_()
 {
-    eprosima::fastdds::dds::SubscriberQos qos =
-            eprosima::fastdds::dds::SUBSCRIBER_QOS_DEFAULT;
+    DDS::SubscriberQos qos =
+            DDS::SUBSCRIBER_QOS_DEFAULT;
 
     return qos;
 }
 
-eprosima::fastdds::dds::DataReaderQos Participant::default_datareader_qos_()
+DDS::DataReaderQos Participant::default_datareader_qos_()
 {
-    eprosima::fastdds::dds::DataReaderQos qos =
-            eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT;
+    DDS::DataReaderQos qos =
+            DDS::DATAREADER_QOS_DEFAULT;
 
     return qos;
 }
 
-eprosima::fastdds::dds::TopicQos Participant::default_topic_qos_()
+DDS::TopicQos Participant::default_topic_qos_()
 {
-    eprosima::fastdds::dds::TopicQos qos =
-            eprosima::fastdds::dds::TOPIC_QOS_DEFAULT;
+    DDS::TopicQos qos =
+            DDS::TOPIC_QOS_DEFAULT;
 
     return qos;
 }
 
-eprosima::fastdds::dds::StatusMask Participant::default_listener_mask_()
+DDS::StatusMask Participant::default_listener_mask_()
 {
-    eprosima::fastdds::dds::StatusMask mask;
+    DDS::StatusMask mask;
 
     // Erase all (DomainParticipant ones are always active)
     mask.none();

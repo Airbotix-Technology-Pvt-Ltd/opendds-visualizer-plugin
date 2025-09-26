@@ -33,8 +33,8 @@ project(fastdds_visualizer_plugin_datastream_plugin)
 # Load external projects
 ###############################################################################
 # Load eProsima packages
-find_package(fastcdr REQUIRED)
-find_package(fastdds REQUIRED)
+find_package(OpenDDS REQUIRED)
+
 
 # Load Qt requirements
 find_package(Qt5 REQUIRED COMPONENTS
@@ -94,6 +94,7 @@ set (ALL_LIBRARY_SOURCES
         "utils/utils.hpp"
         "utils/dynamic_types_utils.cpp"
         "utils/dynamic_types_utils.hpp"
+        "utils/Logger.cpp"
 
         # DataStreamer files
         "datastreamer/FastDdsDataStreamer.cpp"
@@ -132,7 +133,6 @@ message(STATUS "plotjuggler_INCLUDE_DIR: ${plotjuggler_INCLUDE_DIR}")
 message(STATUS "plotjuggler_LIBRARIES: ${plotjuggler_LIBRARIES}")
 
 include_directories(${plotjuggler_INCLUDE_DIR})
-
 # Create library
 add_library(
     ${PROJECT_NAME}
@@ -145,8 +145,7 @@ target_link_libraries(
     ${PROJECT_NAME}
         ${QT_LINK_LIBRARIES}
         ${plotjuggler_LIBRARIES}
-        fastdds
-        fastcdr
+        OpenDDS::Dcps
     )
 
 

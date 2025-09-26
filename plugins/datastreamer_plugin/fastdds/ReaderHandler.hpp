@@ -26,17 +26,23 @@
 
 #include <nlohmann/json.hpp>
 
-#include <fastdds/dds/core/status/StatusMask.hpp>
-#include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/DataReaderListener.hpp>
-#include <fastdds/dds/topic/Topic.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
+#include <dds/DCPS/DataReaderImpl.h>
+#include <dds/DCPS/TopicImpl.h>
+#include <dds/DCPS/LocalObject.h>
+
+#include <dds/DCPS/Marked_Default_Qos.h>
+#include <dds/DCPS/Service_Participant.h>
+#include <dds/DdsDcpsPublicationC.h>
+#include <dds/DdsDcpsInfrastructureC.h>
+
+#include <dds/DCPS/XTypes/DynamicDataImpl.h>
+#include <dds/DCPS/XTypes/DynamicTypeImpl.h>
 
 #include "FastDdsListener.hpp"
 #include "utils/DataTypeConfiguration.hpp"
 #include "utils/dynamic_types_utils.hpp"
 #include "utils/types.hpp"
+#include "utils/Logger.cpp"
 
 namespace eprosima {
 namespace plotjuggler {
@@ -46,7 +52,7 @@ namespace fastdds {
  * @brief TODO
  *
  */
-struct ReaderHandler : public eprosima::fastdds::dds::DataReaderListener
+struct ReaderHandler : public OpenDDS::DCPS::LocalObject<DDS::DataReaderListener>
 {
 public:
 
@@ -54,12 +60,12 @@ public:
     // CREATION & DESTRUCTION
     ////////////////////////////////////////////////////
 
-    ReaderHandler(
-            eprosima::fastdds::dds::Topic* topic,
-            eprosima::fastdds::dds::DataReader* datareader,
-            eprosima::fastdds::dds::DynamicType::_ref_type type,
-            FastDdsListener* listener,
-            const DataTypeConfiguration& data_type_configuration);
+ReaderHandler(
+        DDS::Topic_var topic,
+        DDS::DataReader_var datareader,
+        DDS::DynamicType_ptr type,
+        FastDdsListener* listener,
+        const DataTypeConfiguration& data_type_configuration);
 
 
     virtual ~ReaderHandler();
@@ -82,7 +88,7 @@ public:
     ////////////////////////////////////////////////////
 
     void on_data_available(
-            eprosima::fastdds::dds::DataReader* reader) override;
+            DDS::DataReader* reader) override;
 
 
     ////////////////////////////////////////////////////
@@ -102,7 +108,7 @@ public:
     ////////////////////////////////////////////////////
 
     void create_data_structures_(
-            eprosima::fastdds::dds::DynamicData::_ref_type data = nullptr);
+            DDS::DynamicData_ptr data = nullptr);
 
     ////////////////////////////////////////////////////
     // AUXILIAR STATIC METHODS
@@ -114,9 +120,9 @@ public:
      * Callbacks accepted by this mask:
      * - on_data_available
      *
-     * @return eprosima::fastdds::dds::StatusMask with callbacks needed
+     * @return DDS::StatusMask with callbacks needed
      */
-    static eprosima::fastdds::dds::StatusMask default_listener_mask_();
+    static DDS::StatusMask default_listener_mask_();
 
 
     ////////////////////////////////////////////////////
@@ -131,16 +137,16 @@ public:
     ////////////////////////////////////////////////////
 
     //! Topic related with this DataReader
-    eprosima::fastdds::dds::Topic* topic_;
+    DDS::Topic_var topic_;
 
     //! DataReader
-    eprosima::fastdds::dds::DataReader* reader_;
+    DDS::DataReader_var reader_;
 
     //! Type Informantion
-    eprosima::fastdds::dds::DynamicType::_ref_type type_;
+    DDS::DynamicType_ptr type_;
 
     //! Data Type element
-    eprosima::fastdds::dds::DynamicData::_ref_type data_;
+    DDS::DynamicData_ptr data_;
 
     std::atomic<bool> stop_;
 

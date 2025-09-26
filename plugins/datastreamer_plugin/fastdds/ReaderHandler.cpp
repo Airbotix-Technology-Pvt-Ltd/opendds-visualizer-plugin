@@ -19,9 +19,9 @@
  * @file ReaderHandler.hpp
  */
 
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
-#include <fastdds/dds/xtypes/utils.hpp>
+// #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+// #include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
+// #include <fastdds/dds/xtypes/utils.hpp>
 
 #include "ReaderHandler.hpp"
 #include "utils/utils.hpp"
@@ -31,16 +31,16 @@ namespace eprosima {
 namespace plotjuggler {
 namespace fastdds {
 
-using namespace eprosima::fastdds::dds;
+using namespace DDS;
 
 ////////////////////////////////////////////////////
 // CREATION & DESTRUCTION
 ////////////////////////////////////////////////////
 
 ReaderHandler::ReaderHandler(
-        Topic* topic,
-        DataReader* datareader,
-        DynamicType::_ref_type type,
+        DDS::Topic_var topic,
+        DDS::DataReader_var datareader,
+        DDS::DynamicType_ptr type,
         FastDdsListener* listener,
         const DataTypeConfiguration& data_type_configuration)
     : topic_(topic)
@@ -54,7 +54,7 @@ ReaderHandler::ReaderHandler(
     data_ = DynamicDataFactory::get_instance()->create_data(type_);
 
     // Set this object as this reader's listener
-    reader_->set_listener(this);
+    reader_->set_listener(this, OpenDDS::DCPS::DEFAULT_STATUS_MASK);
 }
 
 ReaderHandler::~ReaderHandler()
@@ -74,70 +74,58 @@ void ReaderHandler::stop()
 {
     // Stop the reader
     stop_ = true;
-    reader_->set_listener(nullptr);
+    reader_->set_listener(nullptr, OpenDDS::DCPS::DEFAULT_STATUS_MASK);
 }
 
 ////////////////////////////////////////////////////
 // LISTENER METHODS [ DATAREADER ]
 ////////////////////////////////////////////////////
 
-void ReaderHandler::on_data_available(
-        DataReader* reader)
+void ReaderHandler::on_data_available(DDS::DataReader_ptr reader)
 {
-    SampleInfo info;
-    ReturnCode_t read_ret = RETCODE_OK;
+  DDS::ReturnCode_t rc = DDS::RETCODE_OK;
+  DDS::SampleInfo info;
 
-    // Non-fixed size types require data to be recreated (e.g. to avoid having sequence members from previous samples)
-    DynamicDataFactory::get_instance()->delete_data(data_);
-    data_ = DynamicDataFactory::get_instance()->create_data(type_);
+  // Create a dynamic data instance from a DynamicType_var 'type_' you already have.
+  // Note: DDS::DynamicData_var is a CORBA _var smart pointer.
+  DDS::DynamicData_var data = new DynamicData(type_);
 
-    // Read Data from reader while there is data available and not should stop
-    while (!stop_ && read_ret == RETCODE_OK)
-    {
-        // Read next data
-        read_ret = reader->take_next_sample(&data_, &info);
+  // Loop until no more data or you decide to stop
+  while (!stop_ && rc == DDS::RETCODE_OK) {
+    // take_next_sample has an overload that accepts DDS::DynamicData_var / pointer
+    rc = reader->take_next_sample(data.inout(), info);
 
-        // If data has been read
-        if (read_ret == RETCODE_OK &&
-                info.instance_state == InstanceStateKind::ALIVE_INSTANCE_STATE)
-        {
-            // Get timestamp
-            double timestamp = utils::get_timestamp_seconds_numeric_value(info.reception_timestamp);
+    if (rc == DDS::RETCODE_OK &&
+        info.instance_state == DDS::ALIVE_INSTANCE_STATE &&
+        info.valid_data) {
 
-            // Reset stored data info
-            numeric_data_info_.clear();
-            string_data_info_.clear();
+      // Use 'data' (DDS::DynamicData*) — example: get a member named "speed" if exists
+      try {
+        int32_t speed = 0;
 
-            // Format the data received to show it in the GUI
-            create_data_structures_(data_);
+        DDS::ReturnCode_t get_rc = data->get_int32_value(speed, /*member id or name*/ 1);
+        // OR use member name APIs (depends on how you want to access)
+        // Note: many get_*_value methods exist on DDS::DynamicData
 
-            // Update previous data view according to new received data structure
-            listener_->on_data_available();
+      } catch (const CORBA::Exception& ex) {
+        ACE_ERROR((LM_ERROR, "Exception reading dynamic data: %C\n", ex._info().c_str()));
+      }
 
-            // Get value maps from data and send callback if there are data
-            if (!numeric_data_info_.empty())
-            {
-                listener_->on_double_data_read(
-                    numeric_data_info_,
-                    timestamp);
-            }
-
-            // Same for strings
-            if (!string_data_info_.empty())
-            {
-                listener_->on_string_data_read(
-                    string_data_info_,
-                    timestamp);
-            }
-        }
+      // ... process numeric_data_info_, string_data_info_, callbacks etc
     }
+    else if (rc == DDS::RETCODE_NO_DATA) {
+      // no more data available
+      break;
+    }
+  } // while
 }
+
 
 ////////////////////////////////////////////////////
 // VALUES METHODS
 ////////////////////////////////////////////////////
 
-const std::string& ReaderHandler::topic_name() const
+std::string ReaderHandler::topic_name() const
 {
     return topic_->get_name();
 }
@@ -152,13 +140,13 @@ const std::string& ReaderHandler::type_name() const
 ////////////////////////////////////////////////////
 
 void ReaderHandler::create_data_structures_(
-        DynamicData::_ref_type data /* = nullptr */)
+        DDS::DynamicData_ptr data /* = nullptr */)
 {
     // Serialize data to JSON format
     nlohmann::json serialized_data;
-    if (RETCODE_OK != utils::serialize_data(data, serialized_data))
+    if (DDS::RETCODE_OK != utils::serialize_data(data, serialized_data))
     {
-        EPROSIMA_LOG_ERROR(READER_HANDLER, "Error serializing data");
+        DDS_ERROR("READER_HANDLER", "Error serializing data");
         return;
     }
     // Create the structures to store the data introspection information AND the data itself
@@ -184,16 +172,12 @@ void ReaderHandler::create_data_structures_(
 // AUXILIAR STATIC METHODS
 ////////////////////////////////////////////////////
 
-eprosima::fastdds::dds::StatusMask ReaderHandler::default_listener_mask_()
+DDS::StatusMask ReaderHandler::default_listener_mask_()
 {
-    // Start from all bits set to 0
-    eprosima::fastdds::dds::StatusMask mask = eprosima::fastdds::dds::StatusMask::none();
-
-    // Only listen this callback (and the DomainParticipantListener ones)
-    mask << eprosima::fastdds::dds::StatusMask::data_available();
-
-    return mask;
+    // Only listen for DATA_AVAILABLE (plus participant-related statuses if needed)
+    return DDS::DATA_AVAILABLE_STATUS;
 }
+
 
 std::vector<std::string> ReaderHandler::numeric_data_series_names() const
 {

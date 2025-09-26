@@ -27,17 +27,17 @@
 #include <unordered_map>
 #include <QObject>
 
-#include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/domain/DomainParticipantListener.hpp>
-#include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
-#include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp>
+// #include <fastdds/dds/domain/DomainParticipant.hpp>
+// #include <fastdds/dds/domain/DomainParticipantListener.hpp>
+// #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+// #include <fastdds/dds/subscriber/DataReader.hpp>
+// #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+// #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+// #include <fastdds/dds/subscriber/Subscriber.hpp>
+// #include <fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp>
 
-#include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
-#include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
+// #include <fastdds/rtps/writer/WriterDiscoveryStatus.hpp>
+// #include <fastdds/rtps/builtin/data/PublicationBuiltinTopicData.hpp>
 
 #include "FastDdsListener.hpp"
 #include "ReaderHandler.hpp"
@@ -52,16 +52,16 @@ class ReaderHandlerDeleter
 public:
 
     ReaderHandlerDeleter(
-            eprosima::fastdds::dds::DomainParticipant* participant,
-            eprosima::fastdds::dds::Subscriber* subscriber);
+            DDS::DomainParticipant* participant,
+            DDS::Subscriber* subscriber);
 
     void operator ()(
             ReaderHandler* ptr) const;
 
 protected:
 
-    eprosima::fastdds::dds::DomainParticipant* participant_;
-    eprosima::fastdds::dds::Subscriber* subscriber_;
+    DDS::DomainParticipant_var participant_;
+    DDS::Subscriber_var subscriber_;
 };
 
 using ReaderHandlerReference = std::unique_ptr<ReaderHandler, ReaderHandlerDeleter>;
@@ -75,7 +75,7 @@ using ReaderHandlerReference = std::unique_ptr<ReaderHandler, ReaderHandlerDelet
  * FUTURE WORK:
  * Use a specific thread to call callbacks instead of using Fast DDS thread
  */
-class Participant : public eprosima::fastdds::dds::DomainParticipantListener
+class Participant : public DDS::DomainParticipantListener
 {
 public:
 
@@ -84,7 +84,7 @@ public:
     ////////////////////////////////////////////////////
 
     Participant(
-            eprosima::fastdds::dds::DomainId_t domain_id,
+            DDS::DomainId_t domain_id,
             std::shared_ptr<TopicDataBase> discovery_database,
             FastDdsListener* listener);
 
@@ -108,7 +108,7 @@ public:
     ////////////////////////////////////////////////////
 
     void on_data_writer_discovery(
-            eprosima::fastdds::dds::DomainParticipant* participant,
+            DDS::DomainParticipant* participant,
             eprosima::fastdds::rtps::WriterDiscoveryStatus reason,
             const eprosima::fastdds::rtps::PublicationBuiltinTopicData& info,
             bool& should_be_ignored) override;
@@ -142,9 +142,9 @@ protected:
     // AUXILIAR METHODS
     ////////////////////////////////////////////////////
 
-    eprosima::fastdds::dds::ReturnCode_t get_type_support_from_xml_(
+    DDS::ReturnCode_t get_type_support_from_xml_(
             const std::string& type_name,
-            eprosima::fastdds::dds::TypeSupport& type_support);
+            DDS::TypeSupport& type_support);
 
     void check_type_info(
             const std::string& topic_name,
@@ -159,13 +159,13 @@ protected:
     // AUXILIAR STATIC METHODS
     ////////////////////////////////////////////////////
 
-    static eprosima::fastdds::dds::DomainParticipantQos default_participant_qos_();
+    static DDS::DomainParticipantQos default_participant_qos_();
 
-    static eprosima::fastdds::dds::SubscriberQos default_subscriber_qos_();
+    static DDS::SubscriberQos default_subscriber_qos_();
 
-    static eprosima::fastdds::dds::TopicQos default_topic_qos_();
+    static DDS::TopicQos default_topic_qos_();
 
-    static eprosima::fastdds::dds::DataReaderQos default_datareader_qos_();
+    static DDS::DataReaderQos default_datareader_qos_();
 
     /**
      * @brief Get default mask
@@ -175,9 +175,9 @@ protected:
      *
      * @note it is important to have a mask, otherwise onDataOnReaders would hide on_data_available
      *
-     * @return eprosima::fastdds::dds::StatusMask with callbacks needed
+     * @return DDS::StatusMask with callbacks needed
      */
-    static eprosima::fastdds::dds::StatusMask default_listener_mask_();
+    static DDS::StatusMask default_listener_mask_();
 
 
     ////////////////////////////////////////////////////
@@ -193,10 +193,12 @@ protected:
     // FAST DDS POINTERS
     ////////////////////////////////////////////////////
 
+    //! Internal Factory reference
+    DDS::DomainParticipantFactory_var factory_;
     //! Internal DomainParticipant reference
-    eprosima::fastdds::dds::DomainParticipant* participant_;
+    DDS::DomainParticipant_var participant_;
     //! Internal Subscriber reference (only one for every DataReader)
-    eprosima::fastdds::dds::Subscriber* subscriber_;
+    DDS::Subscriber_var subscriber_;
 
     /**
      * Collection created in Participant indexed by topic name that contains

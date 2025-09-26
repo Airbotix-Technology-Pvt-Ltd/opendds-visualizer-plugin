@@ -23,23 +23,27 @@
 #include <sstream>
 
 #include "utils.hpp"
+#include "Logger.cpp"
+#include <iomanip>
+#include <dds/DCPS/TimeTypes.h> // for DDS::Time_t
 
 namespace eprosima {
 namespace plotjuggler {
 namespace utils {
 
-std::string get_timestamp_string(
-        const fastdds::rtps::Time_t& timestamp)
+std::string get_timestamp_string(const DDS::Time_t& timestamp)
 {
-    std::stringstream ss;
-    ss << timestamp;
+    std::ostringstream ss;
+    ss << timestamp.sec << "." 
+       << std::setfill('0') << std::setw(9) << timestamp.nanosec;
     return ss.str();
 }
 
+
 double get_timestamp_seconds_numeric_value(
-        const fastdds::rtps::Time_t& timestamp)
+        const DDS::Time_t& timestamp)
 {
-    return (timestamp.seconds() + (timestamp.nanosec() * 1e-9));
+    return (timestamp.sec + (timestamp.nanosec * 1e-9));
 }
 
 std::string QString_to_string(

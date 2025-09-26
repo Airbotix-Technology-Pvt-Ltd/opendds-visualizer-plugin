@@ -22,10 +22,11 @@
 #ifndef _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_UTILS_DYNAMICTYPESUTILS_HPP_
 #define _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_UTILS_DYNAMICTYPESUTILS_HPP_
 
-#include <fastdds/dds/xtypes/dynamic_types/DynamicData.hpp>
+#include <dds/DCPS/XTypes/DynamicDataImpl.h>
 
 #include "utils/DataTypeConfiguration.hpp"
 #include "utils/types.hpp"
+#include "utils/Logger.cpp"
 
 namespace eprosima {
 namespace plotjuggler {
@@ -64,8 +65,8 @@ bool is_kind_boolean(
 bool is_kind_string(
         const nlohmann::json& data);
 
-eprosima::fastdds::dds::ReturnCode_t serialize_data (
-        eprosima::fastdds::dds::DynamicData::_ref_type data,
+DDS::ReturnCode_t serialize_data (
+        DDS::DynamicData_ptr data,
         nlohmann::json& serialized_data);
 
 } /* namespace utils */

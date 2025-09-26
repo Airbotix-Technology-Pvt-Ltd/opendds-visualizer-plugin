@@ -19,7 +19,7 @@
  * @file Handler.hpp
  */
 
-#include <fastdds/dds/log/Log.hpp>
+// #include <fastdds/dds/log/Log.hpp>
 
 #include "Handler.hpp"
 

@@ -30,7 +30,7 @@
 #include <regex>
 #include <string>
 
-#include <fastdds/rtps/common/Time_t.hpp>
+#include <dds/DdsDcpsSubscriptionC.h>      // SampleInfo lives here
 
 namespace eprosima {
 namespace plotjuggler {
@@ -47,10 +47,10 @@ namespace utils {
 #endif // ifdef NDEBUG
 
 std::string get_timestamp_string(
-        const fastdds::rtps::Time_t& timestamp);
+        const DDS::Time_t& timestamp);
 
 double get_timestamp_seconds_numeric_value(
-        const fastdds::rtps::Time_t& timestamp);
+        const DDS::Time_t& timestamp);
 
 std::string QString_to_string(
         const QString& str);

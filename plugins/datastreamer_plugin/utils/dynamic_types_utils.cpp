@@ -27,13 +27,6 @@
 
 #include <nlohmann/json.hpp>
 
-#include <fastdds/dds/log/Log.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicType.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/DynamicTypeMember.hpp>
-#include <fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp>
-#include <fastdds/dds/xtypes/utils.hpp>
-
 #include "dynamic_types_utils.hpp"
 #include "Exception.hpp"
 #include "utils.hpp"
@@ -41,8 +34,6 @@
 namespace eprosima {
 namespace plotjuggler {
 namespace utils {
-using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastdds::rtps;
 
 template std::vector<std::string> get_introspection_type_names<TypeIntrospectionNumericStruct>(
         const TypeIntrospectionNumericStruct& type_names_struct);
@@ -139,7 +130,7 @@ void get_formatted_data(
     }
     else
     {
-        EPROSIMA_LOG_ERROR(DYNAMIC_TYPES_UTILS, "Data type not supported");
+        DDS_ERROR("DYNAMIC_TYPES_UTILS", "Data type not supported");
         return;
     }
 }
@@ -162,27 +153,27 @@ bool is_kind_string(
     return data.is_string();
 }
 
-ReturnCode_t serialize_data (
-        DynamicData::_ref_type data,
+DDS::ReturnCode_t serialize_data (
+        DDS::DynamicData_ptr data,
         nlohmann::json& serialized_data)
 {
     std::stringstream serializer_output;
-    ReturnCode_t retcode;
+    DDS::ReturnCode_t retcode;
 
     if (!data)
     {
-        EPROSIMA_LOG_ERROR(DYNAMIC_TYPES_UTILS, "Data is nullptr. Skipping serialization to JSON format.");
-        return RETCODE_NO_DATA;
+        DDS_ERROR("DYNAMIC_TYPES_UTILS", "Data is nullptr. Skipping serialization to JSON format.");
+        return DDS::RETCODE_NO_DATA;
     }
 
     retcode = json_serialize(data, DynamicDataJsonFormat::EPROSIMA, serializer_output);
-    if (RETCODE_OK != retcode)
+    if (DDS::RETCODE_OK != retcode)
     {
-        EPROSIMA_LOG_ERROR(DYNAMIC_TYPES_UTILS, "Error encountered while serializing DynamicData to JSON.");
+        DDS_ERROR("DYNAMIC_TYPES_UTILS", "Error encountered while serializing DynamicData to JSON.");
         return retcode;
     }
     serializer_output >> serialized_data;
-    return RETCODE_OK;
+    return DDS::RETCODE_OK;
 }
 
 } /* namespace utils */
