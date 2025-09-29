@@ -26,6 +26,8 @@
 
 #include "utils/types.hpp"
 #include "utils/utils.hpp"
+#include "utils/Logger.hpp"
+
 
 namespace eprosima {
 namespace plotjuggler {
@@ -43,14 +45,14 @@ public:
 
     virtual void on_data_available()
     {
-        DEBUG("Calling on_data_available");
+        DDS_DEBUG("FastDdsListener","Calling on_data_available");
     }
 
     virtual void on_double_data_read(
             const std::vector<types::NumericDatum>& numeric_data,
             double timestamp)
     {
-        DEBUG("Calling on_double_data_read");
+        DDS_DEBUG("FastDdsListener","Calling on_double_data_read");
         static_cast<void>(numeric_data);
         static_cast<void>(timestamp);
     }
@@ -59,7 +61,7 @@ public:
             const std::vector<types::TextDatum>& text_data,
             double timestamp)
     {
-        DEBUG("Calling on_string_data_read");
+        DDS_DEBUG("FastDdsListener","Calling on_string_data_read");
         static_cast<void>(text_data);
         static_cast<void>(timestamp);
     }
@@ -68,7 +70,7 @@ public:
             const std::string& topic_name,
             const std::string& type_name)
     {
-        DEBUG("Calling on_topic_discovery");
+        DDS_DEBUG("FastDdsListener","Calling on_topic_discovery");
         static_cast<void>(topic_name);
         static_cast<void>(type_name);
     }

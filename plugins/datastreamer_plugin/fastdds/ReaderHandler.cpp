@@ -6,7 +6,7 @@
  */
 
 #include "ReaderHandler.hpp"
-#include "utils/Logger.cpp"
+#include "utils/Logger.hpp"
 
 namespace eprosima {
 namespace plotjuggler {

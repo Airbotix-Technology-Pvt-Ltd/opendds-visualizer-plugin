@@ -25,7 +25,6 @@
 #include "FastDdsListener.hpp"
 #include "ReaderHandler.hpp"
 #include "TopicDataBase.hpp"
-#include "utils/Logger.cpp"
 
 namespace eprosima {
 namespace plotjuggler {

@@ -94,7 +94,7 @@ set (ALL_LIBRARY_SOURCES
         "utils/utils.hpp"
         "utils/dynamic_types_utils.cpp"
         "utils/dynamic_types_utils.hpp"
-        "utils/Logger.cpp"
+        "utils/Logger.hpp"
 
         # DataStreamer files
         "datastreamer/FastDdsDataStreamer.cpp"

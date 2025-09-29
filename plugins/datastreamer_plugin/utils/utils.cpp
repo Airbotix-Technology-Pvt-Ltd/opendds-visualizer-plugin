@@ -1,30 +1,17 @@
 // Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
-//
-// This file is part of eProsima Fast DDS Visualizer Plugin.
-//
-// eProsima Fast DDS Visualizer Plugin is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// eProsima Fast DDS Visualizer Plugin is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with eProsima Fast DDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
+// Licensed under the GNU General Public License v3.0.
 
 /**
  * @file utils.cpp
  */
 
 #include <filesystem>
-#include <sstream>
+#include <cstdio> // for snprintf
+#include <iomanip>
+#include <string>
 
 #include "utils.hpp"
-#include "Logger.cpp"
-#include <iomanip>
+#include "Logger.hpp"
 #include <dds/DCPS/TimeTypes.h> // for DDS::Time_t
 
 namespace eprosima {
@@ -33,12 +20,10 @@ namespace utils {
 
 std::string get_timestamp_string(const DDS::Time_t& timestamp)
 {
-    std::ostringstream ss;
-    ss << timestamp.sec << "." 
-       << std::setfill('0') << std::setw(9) << timestamp.nanosec;
-    return ss.str();
+    char buffer[32];
+    snprintf(buffer, sizeof(buffer), "%ld.%09u", timestamp.sec, timestamp.nanosec);
+    return std::string(buffer);
 }
-
 
 double get_timestamp_seconds_numeric_value(
         const DDS::Time_t& timestamp)
@@ -56,7 +41,7 @@ QString string_to_QString(
         const std::string& str)
 {
     // return QString::fromStdString(str);
-    return QString::fromUtf8( str.data(), str.size());
+    return QString::fromUtf8(str.data(), str.size());
 }
 
 std::string to_string(

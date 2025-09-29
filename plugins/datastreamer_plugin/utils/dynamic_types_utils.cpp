@@ -1,3 +1,6 @@
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Licensed under the GNU General Public License v3.0.
+
 #include "dynamic_types_utils.hpp"
 #include "utils/Exception.hpp"
 #include "utils.hpp"
@@ -8,6 +11,8 @@
 #include <dds/DCPS/JsonValueWriter.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
+#include "utils/Logger.hpp"
+
 
 #include <algorithm>
 #include <iostream>
@@ -68,13 +73,15 @@ void get_formatted_data(
         {
             if (data_type_configuration.discard_large_arrays)
             {
-                DEBUG("Discarding array " << base_type_name << " of size " << data.size());
+                DDS_DEBUG("dynamic_types_utils", "Discarding array %s of size %u",
+                          base_type_name.c_str(), static_cast<unsigned>(data.size()));
                 return;
             }
             else
             {
-                DEBUG("Truncating array " << base_type_name << " of size " << data.size() 
-                      << " to size " << data_type_configuration.max_array_size);
+                DDS_DEBUG("dynamic_types_utils", "Truncating array %s of size %u to size %u",
+                          base_type_name.c_str(), static_cast<unsigned>(data.size()),
+                          data_type_configuration.max_array_size);
             }
         }
 
@@ -102,8 +109,8 @@ void get_formatted_data(
     }
     else
     {
-        std::cerr << "Data type not supported in get_formatted_data for key: " 
-                  << base_type_name << std::endl;
+        DDS_ERROR("dynamic_types_utils", "Data type not supported in get_formatted_data for key: %s",
+                  base_type_name.c_str());
         return;
     }
 }
@@ -123,11 +130,6 @@ bool is_kind_string(const nlohmann::json& data)
     return data.is_string();
 }
 
-
-
-
-
-
 DDS::ReturnCode_t serialize_data(
     DDS::DynamicData_ptr data,
     nlohmann::json& serialized_data)
@@ -135,7 +137,7 @@ DDS::ReturnCode_t serialize_data(
     // Check for null data
     if (!data)
     {
-        std::cerr << "DYNAMIC_TYPES_UTILS: Data is nullptr. Skipping serialization to JSON format." << std::endl;
+        DDS_ERROR("dynamic_types_utils", "Data is nullptr. Skipping serialization to JSON format.");
         return DDS::RETCODE_NO_DATA;
     }
 
@@ -143,7 +145,7 @@ DDS::ReturnCode_t serialize_data(
     DDS::DynamicType_ptr type = data->type();
     if (!type)
     {
-        std::cerr << "DYNAMIC_TYPES_UTILS: DynamicData has no associated DynamicType." << std::endl;
+        DDS_ERROR("dynamic_types_utils", "DynamicData has no associated DynamicType.");
         return DDS::RETCODE_ERROR;
     }
 
@@ -155,7 +157,7 @@ DDS::ReturnCode_t serialize_data(
     DDS::ReturnCode_t retcode = OpenDDS::DCPS::to_json(data, writer);
     if (retcode != DDS::RETCODE_OK)
     {
-        std::cerr << "DYNAMIC_TYPES_UTILS: Error encountered while serializing DynamicData to JSON: " << retcode << std::endl;
+        DDS_ERROR("dynamic_types_utils", "Error encountered while serializing DynamicData to JSON: %d", retcode);
         return retcode;
     }
 
@@ -166,7 +168,7 @@ DDS::ReturnCode_t serialize_data(
     }
     catch (const nlohmann::json::exception& e)
     {
-        std::cerr << "DYNAMIC_TYPES_UTILS: Failed to parse JSON string: " << e.what() << std::endl;
+        DDS_ERROR("dynamic_types_utils", "Failed to parse JSON string: %s", e.what());
         return DDS::RETCODE_ERROR;
     }
 

@@ -21,6 +21,7 @@
 
 
 #include "Handler.hpp"
+#include "utils/Logger.hpp"
 
 namespace eprosima {
 namespace plotjuggler {
@@ -72,7 +73,7 @@ void Handler::register_type_from_xml(
     }
     else
     {
-        WARNING("Trying to add xml from a non-connected handler");
+        DDS_WARNING("Handler","Trying to add xml from a non-connected handler");
     }
 }
 

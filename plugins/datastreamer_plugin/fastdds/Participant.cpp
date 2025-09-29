@@ -8,15 +8,7 @@
 #include "Participant.hpp"
 #include "utils/utils.hpp"
 #include "utils/Exception.hpp"
-#include <dds/DdsDcpsDomainC.h>
-#include <dds/DdsDcpsSubscriptionC.h>
-#include <dds/DdsDcpsPublicationC.h>
-#include <dds/DCPS/XTypes/DynamicDataImpl.h>
-#include <dds/DCPS/Service_Participant.h>
-#include <dds/DCPS/Qos_Helper.h>
-#include <dds/DCPS/DCPS_Utils.h>
-#include <ace/Log_Msg.h>
-#include <cstdlib>
+#include "utils/Logger.hpp"
 
 namespace eprosima {
 namespace plotjuggler {
