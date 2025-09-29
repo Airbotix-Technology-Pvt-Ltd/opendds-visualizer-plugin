@@ -111,7 +111,7 @@ Participant::Participant(
     }
 
     participant_ = factory_->create_participant(
-        domain_id, default_participant_qos_(), this, default_listener_mask_());
+        domain_id, default_participant_qos_(), nullptr, default_listener_mask_());
 
     if (!participant_)
     {

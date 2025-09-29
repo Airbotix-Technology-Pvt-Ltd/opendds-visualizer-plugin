@@ -53,7 +53,7 @@ using ReaderHandlerReference = std::unique_ptr<ReaderHandler, ReaderHandlerDelet
  * It creates, manages, and destroys every OpenDDS entity that the process requires to instantiate.
  * The discovery and user data received is transmitted through a FastDdsListener object.
  */
-class Participant : public DDS::DomainParticipantListener
+class Participant
 {
 public:
     Participant(
@@ -72,34 +72,7 @@ public:
     // DDS::DomainParticipantListener methods
     void on_publication_matched(
             DDS::DataWriter_ptr writer,
-            const DDS::PublicationMatchedStatus& info) override;
-
-    void on_inconsistent_topic(
-            DDS::Topic_ptr topic,
-            const DDS::InconsistentTopicStatus& status) override;
-
-    void on_offered_deadline_missed(
-            DDS::DataWriter_ptr writer,
-            const DDS::OfferedDeadlineMissedStatus& status) override;
-
-    void on_offered_incompatible_qos(
-            DDS::DataWriter_ptr writer,
-            const DDS::OfferedIncompatibleQosStatus& status) override;
-
-    void on_liveliness_lost(
-            DDS::DataWriter_ptr writer,
-            const DDS::LivelinessLostStatus& status) override;
-
-    void on_data_on_readers(
-            DDS::Subscriber_ptr subscriber) override;
-
-    void on_data_available(DDS::DataReader_ptr reader) override;
-    void on_requested_deadline_missed(DDS::DataReader_ptr, const DDS::RequestedDeadlineMissedStatus&) override;
-    void on_requested_incompatible_qos(DDS::DataReader_ptr, const DDS::RequestedIncompatibleQosStatus&) override;
-    void on_sample_rejected(DDS::DataReader_ptr, const DDS::SampleRejectedStatus&) override;
-    void on_liveliness_changed(DDS::DataReader_ptr, const DDS::LivelinessChangedStatus&) override;
-    void on_subscription_matched(DDS::DataReader_ptr, const DDS::SubscriptionMatchedStatus&) override;
-    void on_sample_lost(DDS::DataReader_ptr, const DDS::SampleLostStatus&) override;
+            const DDS::PublicationMatchedStatus& info);
 
     std::vector<types::DatumLabel> numeric_data_series_names() const;
 
