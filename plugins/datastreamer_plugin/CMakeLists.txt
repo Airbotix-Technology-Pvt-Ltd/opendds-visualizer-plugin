@@ -26,7 +26,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 ###############################################################################
 # Project
 ###############################################################################
-project(fastdds_visualizer_plugin_datastream_plugin)
+project(opendds_visualizer_plugin_datastream_plugin)
 
 
 ###############################################################################

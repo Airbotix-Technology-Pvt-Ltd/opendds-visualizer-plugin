@@ -48,7 +48,7 @@ set(PRODUCT_VERSION_STR ${PRODUCT_MAJOR_VERSION}.${PRODUCT_MINOR_VERSION}.${PROD
 ###############################################################################
 # Project
 ###############################################################################
-project(fastdds_visualizer_plugin)
+project(opendds_visualizer_plugin)
 
 set(PROJECT_VERSION_MAJOR "${PRODUCT_MAJOR_VERSION}")
 set(PROJECT_VERSION_MINOR "${PRODUCT_MINOR_VERSION}")
