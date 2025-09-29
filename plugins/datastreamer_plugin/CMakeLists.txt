@@ -108,6 +108,7 @@ set (ALL_LIBRARY_SOURCES
         "fastdds/Participant.hpp"
         "fastdds/ReaderHandler.cpp"
         "fastdds/ReaderHandler.hpp"
+        "fastdds/TopicDataBase.hpp"
 
         # UI files
         "ui/topic_selection_dialog/dialogselecttopics.cpp"
