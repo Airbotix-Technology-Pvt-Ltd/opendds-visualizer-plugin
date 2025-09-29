@@ -19,7 +19,6 @@
  * @file Handler.hpp
  */
 
-// #include <fastdds/dds/log/Log.hpp>
 
 #include "Handler.hpp"
 
@@ -36,9 +35,6 @@ Handler::Handler(
     : listener_(listener)
     , discovery_database_(std::make_shared<TopicDataBase>())
 {
-    // TOOD remove
-    // Activate fast dds warning log
-    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Warning);
     // Do nothing
 }
 

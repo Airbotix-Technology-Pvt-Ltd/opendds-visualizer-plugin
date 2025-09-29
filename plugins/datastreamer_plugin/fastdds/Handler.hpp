@@ -24,12 +24,6 @@
 
 #include <memory>
 
-// #include <fastdds/dds/domain/DomainParticipant.hpp>
-// #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
-// #include <fastdds/dds/domain/DomainParticipantListener.hpp>
-// #include <fastdds/dds/subscriber/Subscriber.hpp>
-// #include <fastdds/dds/subscriber/DataReader.hpp>
-
 #include "FastDdsListener.hpp"
 #include "Participant.hpp"
 
