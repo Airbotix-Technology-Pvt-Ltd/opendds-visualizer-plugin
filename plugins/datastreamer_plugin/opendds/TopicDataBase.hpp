@@ -23,6 +23,7 @@
 #define _EPROSIMA_PLOTJUGGLEROPENDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_OPENDDS_TOPICDATABASE_HPP_
 
 #include <unordered_map>
+#include <unordered_set>
 #include <tuple>
 #include <dds/DdsDcpsCoreTypeSupportC.h>
 
@@ -43,8 +44,11 @@ using TypeInfoAvailable = bool;
 using DataTypeRegistryInfo = std::pair<DataTypeNameType, TypeInfoAvailable>;
 using DataTypeIdInfo = std::pair<DataTypeNameType, DataTypeId>;
 using TopicDataBase = std::unordered_map<TopicName, DataTypeRegistryInfo>;
-// TopicIds stores a mapping from topic name to type name for type caching
+// TopicIds stores a mapping from topic name to type name
+// This is used to cache the relationship between topics and their types
 using TopicIds = std::unordered_map<TopicName, DataTypeNameType>;
+// TypeCache stores registered type names for quick lookup
+using TypeCache = std::unordered_set<DataTypeNameType>;
 
 } /* namespace opendds */
 } /* namespace plotjuggler */
