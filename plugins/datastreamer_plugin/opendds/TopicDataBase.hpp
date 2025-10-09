@@ -43,7 +43,8 @@ using TypeInfoAvailable = bool;
 using DataTypeRegistryInfo = std::pair<DataTypeNameType, TypeInfoAvailable>;
 using DataTypeIdInfo = std::pair<DataTypeNameType, DataTypeId>;
 using TopicDataBase = std::unordered_map<TopicName, DataTypeRegistryInfo>;
-using TopicIds = std::unordered_map<TopicName, DataTypeIdInfo>;
+// TopicIds stores a mapping from topic name to type name for type caching
+using TopicIds = std::unordered_map<TopicName, DataTypeNameType>;
 
 } /* namespace opendds */
 } /* namespace plotjuggler */
