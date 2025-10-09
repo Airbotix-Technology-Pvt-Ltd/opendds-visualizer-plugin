@@ -1,26 +1,26 @@
 // Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
-// This file is part of eProsima Fast DDS Visualizer Plugin.
+// This file is part of eProsima OpenDDS Visualizer Plugin.
 //
-// eProsima Fast DDS Visualizer Plugin is free software: you can redistribute it and/or modify
+// eProsima OpenDDS Visualizer Plugin is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// eProsima Fast DDS Visualizer Plugin is distributed in the hope that it will be useful,
+// eProsima OpenDDS Visualizer Plugin is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with eProsima Fast DDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
+// along with eProsima OpenDDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * @file Configuration.hpp
  */
 
-#ifndef _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_UTILS_DATATYPECONFIGURATION_HPP_
-#define _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_UTILS_DATATYPECONFIGURATION_HPP_
+#ifndef _EPROSIMA_PLOTJUGGLEROPENDDS_PLUGIN_PLUGINS_UTILS_DATATYPECONFIGURATION_HPP_
+#define _EPROSIMA_PLOTJUGGLEROPENDDS_PLUGIN_PLUGINS_UTILS_DATATYPECONFIGURATION_HPP_
 
 #include <QStringList>
 #include <QSettings>
@@ -30,13 +30,10 @@ namespace eprosima {
 namespace plotjuggler {
 
 /**
- * @brief This class handles every Fast DDS entity required.
+ * @brief This struct holds configuration for data type handling.
  *
- * It create, manage and destroy every Fast DDS entity that the process requires to instantiate.
- * The discovery and user data received is transmitted through a UiListener object.
- *
- * FUTURE WORK:
- * Use a specific thread to call callbacks instead of using Fast DDS thread
+ * It controls how data types are processed and managed by the OpenDDS visualizer plugin.
+ * Settings include array size limits and timestamp usage.
  */
 struct DataTypeConfiguration
 {
@@ -48,4 +45,4 @@ struct DataTypeConfiguration
 } /* namespace plotjuggler */
 } /* namespace eprosima */
 
-#endif // _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_UTILS_DATATYPECONFIGURATION_HPP_
+#endif // _EPROSIMA_PLOTJUGGLEROPENDDS_PLUGIN_PLUGINS_UTILS_DATATYPECONFIGURATION_HPP_

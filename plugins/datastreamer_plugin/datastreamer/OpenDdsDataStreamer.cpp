@@ -100,7 +100,7 @@ void OpenDdsDataStreamer::shutdown()
     {
         running_ = false;
 
-        // Reset FastDDS so DDS entities are destroyed
+        // Reset OpenDDS so DDS entities are destroyed
         opendds_handler_.reset();
         select_topics_dialog_.reset();
     }
@@ -130,7 +130,7 @@ bool OpenDdsDataStreamer::xmlLoadState(
 }
 
 ////////////////////////////////////////////////////
-// FASTDDS LISTENER METHODS
+// OPENDDS LISTENER METHODS
 ////////////////////////////////////////////////////
 
 void OpenDdsDataStreamer::on_data_available()
