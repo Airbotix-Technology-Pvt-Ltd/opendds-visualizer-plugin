@@ -2,10 +2,10 @@
 // Licensed under the GNU General Public License v3.0.
 
 /**
- * @file FastDdsDataStreamer.cpp
+ * @file OpenDdsDataStreamer.cpp
  */
 
-#include "FastDdsDataStreamer.hpp"
+#include "OpenDdsDataStreamer.hpp"
 #include "ui/topic_selection_dialog/dialogselecttopics.h"
 #include "utils/utils.hpp"
 #include "utils/Exception.hpp"
@@ -15,28 +15,28 @@ namespace eprosima {
 namespace plotjuggler {
 namespace datastreamer {
 
-FastDdsDataStreamer::FastDdsDataStreamer()
+OpenDdsDataStreamer::OpenDdsDataStreamer()
     : running_(false)
     , configuration_(QString(CONFIGURATION_SETTINGS_PREFIX_))
-    , fastdds_handler_(this)
+    , opendds_handler_(this)
     , select_topics_dialog_(
         configuration_,
-        fastdds_handler_.get_topic_data_base(),
+        opendds_handler_.get_topic_data_base(),
         this)
 {
-    DDS_DEBUG("FastDdsDataStreamer", "Create FastDdsDataStreamer");
+    DDS_DEBUG("OpenDdsDataStreamer", "Create OpenDdsDataStreamer");
 }
 
-FastDdsDataStreamer::~FastDdsDataStreamer()
+OpenDdsDataStreamer::~OpenDdsDataStreamer()
 {
-    DDS_DEBUG("FastDdsDataStreamer", "Destroy FastDdsDataStreamer");
+    DDS_DEBUG("OpenDdsDataStreamer", "Destroy OpenDdsDataStreamer");
     shutdown();
 }
 
-bool FastDdsDataStreamer::start(
+bool OpenDdsDataStreamer::start(
         QStringList*)
 {
-    DDS_DEBUG("FastDdsDataStreamer", "FastDdsDataStreamer::start");
+    DDS_DEBUG("OpenDdsDataStreamer", "OpenDdsDataStreamer::start");
 
     // Check if it is already running
     if (running_)
@@ -57,7 +57,7 @@ bool FastDdsDataStreamer::start(
     // Check if Accept has been pressed
     if (dialog_result != QDialog::Accepted)
     {
-        DDS_DEBUG("FastDdsDataStreamer", "Dialog closed cancelled, exiting");
+        DDS_DEBUG("OpenDdsDataStreamer", "Dialog closed cancelled, exiting");
         return false;
     }
 
@@ -71,14 +71,14 @@ bool FastDdsDataStreamer::start(
 
     if (topics.empty())
     {
-        DDS_DEBUG("FastDdsDataStreamer", "No topics selected, exiting");
+        DDS_DEBUG("OpenDdsDataStreamer", "No topics selected, exiting");
         throw InitializationException("No topics selected.");
     }
 
     for (const auto& topic : topics)
     {
         // Create a subscription
-        fastdds_handler_.create_subscription(
+        opendds_handler_.create_subscription(
             utils::QString_to_string(topic),
             configuration_.data_type_configuration);
     }
@@ -91,9 +91,9 @@ bool FastDdsDataStreamer::start(
     return true;
 }
 
-void FastDdsDataStreamer::shutdown()
+void OpenDdsDataStreamer::shutdown()
 {
-    DDS_DEBUG("FastDdsDataStreamer", "Bye World");
+    DDS_DEBUG("OpenDdsDataStreamer", "Bye World");
 
     // If it is running, stop it
     if (running_)
@@ -101,29 +101,29 @@ void FastDdsDataStreamer::shutdown()
         running_ = false;
 
         // Reset FastDDS so DDS entities are destroyed
-        fastdds_handler_.reset();
+        opendds_handler_.reset();
         select_topics_dialog_.reset();
     }
 }
 
-bool FastDdsDataStreamer::isRunning() const
+bool OpenDdsDataStreamer::isRunning() const
 {
     return running_;
 }
 
-const char* FastDdsDataStreamer::name() const
+const char* OpenDdsDataStreamer::name() const
 {
     return PLUGIN_NAME_;
 }
 
-bool FastDdsDataStreamer::xmlSaveState(
+bool OpenDdsDataStreamer::xmlSaveState(
         QDomDocument& doc,
         QDomElement& plugin_elem) const
 {
     return configuration_.xmlSaveState(doc, plugin_elem);
 }
 
-bool FastDdsDataStreamer::xmlLoadState(
+bool OpenDdsDataStreamer::xmlLoadState(
         const QDomElement& parent_element)
 {
     return configuration_.xmlLoadState(parent_element);
@@ -133,9 +133,9 @@ bool FastDdsDataStreamer::xmlLoadState(
 // FASTDDS LISTENER METHODS
 ////////////////////////////////////////////////////
 
-void FastDdsDataStreamer::on_data_available()
+void OpenDdsDataStreamer::on_data_available()
 {
-    DDS_DEBUG("FastDdsDataStreamer", "FastDdsDataStreamer on_data_available");
+    DDS_DEBUG("OpenDdsDataStreamer", "OpenDdsDataStreamer on_data_available");
 
     // Locking DataStream
     std::lock_guard<std::mutex> lock(mutex());
@@ -144,18 +144,18 @@ void FastDdsDataStreamer::on_data_available()
     create_series_();
 }
 
-void FastDdsDataStreamer::on_double_data_read(
+void OpenDdsDataStreamer::on_double_data_read(
         const std::vector<std::pair<std::string, double>>& data_per_topic_value,
         double timestamp)
 {
-    DDS_DEBUG("FastDdsDataStreamer", "FastDdsDataStreamer on_double_data_read");
+    DDS_DEBUG("OpenDdsDataStreamer", "OpenDdsDataStreamer on_double_data_read");
 
     // Locking DataStream
     std::lock_guard<std::mutex> lock(mutex());
 
     for (const auto& data : data_per_topic_value)
     {
-        DDS_DEBUG("FastDdsDataStreamer", "Adding to numeric series %s value %f with timestamp %f",
+        DDS_DEBUG("OpenDdsDataStreamer", "Adding to numeric series %s value %f with timestamp %f",
                   data.first.c_str(), data.second, timestamp);
         if (dataMap().numeric.find(data.first) == dataMap().numeric.end())
         {
@@ -166,24 +166,24 @@ void FastDdsDataStreamer::on_double_data_read(
 
         // Add data to series
         series.pushBack({timestamp, data.second});
-        DDS_DEBUG("FastDdsDataStreamer", "Data added to series");
+        DDS_DEBUG("OpenDdsDataStreamer", "Data added to series");
     }
 
     emit dataReceived();
 }
 
-void FastDdsDataStreamer::on_string_data_read(
+void OpenDdsDataStreamer::on_string_data_read(
         const std::vector<std::pair<std::string, std::string>>& data_per_topic_value,
         double timestamp)
 {
-    DDS_DEBUG("FastDdsDataStreamer", "FastDdsDataStreamer on_string_data_read");
+    DDS_DEBUG("OpenDdsDataStreamer", "OpenDdsDataStreamer on_string_data_read");
 
     // Locking DataStream
     std::lock_guard<std::mutex> lock(mutex());
 
     for (const auto& data : data_per_topic_value)
     {
-        DDS_DEBUG("FastDdsDataStreamer", "Adding to string series %s value %s with timestamp %f",
+        DDS_DEBUG("OpenDdsDataStreamer", "Adding to string series %s value %s with timestamp %f",
                   data.first.c_str(), data.second.c_str(), timestamp);
 
         // Get data map
@@ -195,13 +195,13 @@ void FastDdsDataStreamer::on_string_data_read(
     emit dataReceived();
 }
 
-void FastDdsDataStreamer::on_topic_discovery(
+void OpenDdsDataStreamer::on_topic_discovery(
         const std::string& topic_name,
         const std::string& type_name)
 {
-    DDS_DEBUG("FastDdsDataStreamer", "FastDdsDataStreamer topic_discovery_signal %s",
+    DDS_DEBUG("OpenDdsDataStreamer", "OpenDdsDataStreamer topic_discovery_signal %s",
               topic_name.c_str());
-    bool type_info_available = fastdds_handler_.get_topic_data_base()->operator[](topic_name).second;
+    bool type_info_available = opendds_handler_.get_topic_data_base()->operator[](topic_name).second;
 
     // Emit signal to UI so it is handled from Qt thread
     emit select_topics_dialog_.topic_discovery_signal(
@@ -214,18 +214,18 @@ void FastDdsDataStreamer::on_topic_discovery(
 // UI LISTENER METHODS
 ////////////////////////////////////////////////////
 
-void FastDdsDataStreamer::on_xml_datatype_file_added(
+void OpenDdsDataStreamer::on_xml_datatype_file_added(
         const std::string& file_path)
 {
-    DDS_DEBUG("FastDdsDataStreamer", "FastDdsDataStreamer on_xml_datatype_file_added %s",
+    DDS_DEBUG("OpenDdsDataStreamer", "OpenDdsDataStreamer on_xml_datatype_file_added %s",
               file_path.c_str());
-    fastdds_handler_.register_type_from_xml(file_path);
+    opendds_handler_.register_type_from_xml(file_path);
 }
 
-void FastDdsDataStreamer::on_domain_connection(
+void OpenDdsDataStreamer::on_domain_connection(
         unsigned int domain_id)
 {
-    DDS_DEBUG("FastDdsDataStreamer", "FastDdsDataStreamer on_domain_connection %u",
+    DDS_DEBUG("OpenDdsDataStreamer", "OpenDdsDataStreamer on_domain_connection %u",
               domain_id);
     connect_to_domain_(domain_id);
 }
@@ -234,39 +234,39 @@ void FastDdsDataStreamer::on_domain_connection(
 // AUXILIAR METHODS
 ////////////////////////////////////////////////////
 
-void FastDdsDataStreamer::connect_to_domain_(
+void OpenDdsDataStreamer::connect_to_domain_(
         unsigned int domain_id)
 {
-    DDS_DEBUG("FastDdsDataStreamer", "FastDdsDataStreamer connect_to_domain_ %u",
+    DDS_DEBUG("OpenDdsDataStreamer", "OpenDdsDataStreamer connect_to_domain_ %u",
               domain_id);
 
     // Reset view and handler
     select_topics_dialog_.reset();
-    fastdds_handler_.reset();
+    opendds_handler_.reset();
 
     // Connect to domain
-    fastdds_handler_.connect_to_domain(domain_id);
+    opendds_handler_.connect_to_domain(domain_id);
     select_topics_dialog_.connect_to_domain(domain_id);
 }
 
-void FastDdsDataStreamer::create_series_()
+void OpenDdsDataStreamer::create_series_()
 {
     // Get all series from topics and create them
     // NUMERIC
-    std::vector<types::DatumLabel> numeric_series = fastdds_handler_.numeric_data_series_names();
+    std::vector<types::DatumLabel> numeric_series = opendds_handler_.numeric_data_series_names();
     for (const auto& series : numeric_series)
     {
         // Create a series
-        DDS_DEBUG("FastDdsDataStreamer", "Creating numeric series: %s", series.c_str());
+        DDS_DEBUG("OpenDdsDataStreamer", "Creating numeric series: %s", series.c_str());
         dataMap().addNumeric(series);
     }
 
     // STRING
-    std::vector<types::DatumLabel> string_series = fastdds_handler_.string_data_series_names();
+    std::vector<types::DatumLabel> string_series = opendds_handler_.string_data_series_names();
     for (const auto& series : string_series)
     {
         // Create a series
-        DDS_DEBUG("FastDdsDataStreamer", "Creating string series: %s", series.c_str());
+        DDS_DEBUG("OpenDdsDataStreamer", "Creating string series: %s", series.c_str());
         dataMap().addStringSeries(series);
     }
 }

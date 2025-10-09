@@ -15,7 +15,7 @@
 
 namespace eprosima {
 namespace plotjuggler {
-namespace fastdds {
+namespace opendds {
 
 using namespace DDS;
 
@@ -23,7 +23,7 @@ ReaderHandler::ReaderHandler(
         DDS::Topic_var topic,
         DDS::DataReader_var reader,
         DDS::DynamicType_ptr type,
-        FastDdsListener* listener,
+        OpenDdsListener* listener,
         const DataTypeConfiguration& data_type_configuration)
     : topic_(topic)
     , reader_(reader)
@@ -278,6 +278,6 @@ DDS::StatusMask ReaderHandler::default_listener_mask_()
     return mask;
 }
 
-} /* namespace fastdds */
+} /* namespace opendds */
 } /* namespace plotjuggler */
 } /* namespace eprosima */

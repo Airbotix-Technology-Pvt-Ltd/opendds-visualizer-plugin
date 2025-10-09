@@ -29,7 +29,7 @@
 
 #include "Configuration.hpp"
 #include "UiListener.hpp"
-#include "fastdds/TopicDataBase.hpp"
+#include "opendds/TopicDataBase.hpp"
 
 namespace Ui {
 class DialogSelectTopics;
@@ -48,7 +48,7 @@ public:
 
     DialogSelectTopics(
             const Configuration& configuration,
-            std::shared_ptr<fastdds::TopicDataBase> discovery_database,
+            std::shared_ptr<opendds::TopicDataBase> discovery_database,
             UiListener* listener,
             QWidget* parent = nullptr);
 
@@ -137,7 +137,7 @@ protected:
     void unregistered_type_change_format_(
             const int row);
 
-    std::shared_ptr<fastdds::TopicDataBase> discovery_database_;
+    std::shared_ptr<opendds::TopicDataBase> discovery_database_;
 
     Configuration configuration_;
 

@@ -97,18 +97,18 @@ set (ALL_LIBRARY_SOURCES
         "utils/Logger.hpp"
 
         # DataStreamer files
-        "datastreamer/FastDdsDataStreamer.cpp"
-        "datastreamer/FastDdsDataStreamer.hpp"
+        "datastreamer/OpenDdsDataStreamer.cpp"
+        "datastreamer/OpenDdsDataStreamer.hpp"
 
-        # fastdds files
-        "fastdds/Handler.cpp"
-        "fastdds/Handler.hpp"
-        "fastdds/FastDdsListener.hpp"
-        "fastdds/Participant.cpp"
-        "fastdds/Participant.hpp"
-        "fastdds/ReaderHandler.cpp"
-        "fastdds/ReaderHandler.hpp"
-        "fastdds/TopicDataBase.hpp"
+        # opendds files
+        "opendds/Handler.cpp"
+        "opendds/Handler.hpp"
+        "opendds/OpenDdsListener.hpp"
+        "opendds/Participant.cpp"
+        "opendds/Participant.hpp"
+        "opendds/ReaderHandler.cpp"
+        "opendds/ReaderHandler.hpp"
+        "opendds/TopicDataBase.hpp"
 
         # UI files
         "ui/topic_selection_dialog/dialogselecttopics.cpp"

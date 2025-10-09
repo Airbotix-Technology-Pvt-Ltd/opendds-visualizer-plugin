@@ -5,8 +5,8 @@
  * @file ReaderHandler.hpp
  */
 
-#ifndef _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_FASTDDS_READERHANDLER_HPP_
-#define _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_FASTDDS_READERHANDLER_HPP_
+#ifndef _EPROSIMA_PLOTJUGGLEROPENDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_OPENDDS_READERHANDLER_HPP_
+#define _EPROSIMA_PLOTJUGGLEROPENDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_OPENDDS_READERHANDLER_HPP_
 
 #include <dds/DdsDcpsDomainC.h>
 #include <dds/DdsDcpsSubscriptionC.h>
@@ -14,11 +14,11 @@
 #include <dds/DCPS/XTypes/DynamicTypeSupport.h>
 #include "utils/utils.hpp"
 #include "utils/dynamic_types_utils.hpp"
-#include "FastDdsListener.hpp"
+#include "OpenDdsListener.hpp"
 
 namespace eprosima {
 namespace plotjuggler {
-namespace fastdds {
+namespace opendds {
 
 class ReaderHandler : public DDS::DataReaderListener
 {
@@ -27,7 +27,7 @@ public:
             DDS::Topic_var topic,
             DDS::DataReader_var reader,
             DDS::DynamicType_ptr type,
-            FastDdsListener* listener,
+            OpenDdsListener* listener,
             const DataTypeConfiguration& data_type_configuration);
 
     virtual ~ReaderHandler();
@@ -77,7 +77,7 @@ protected:
     DDS::Topic_var topic_;
     DDS::DataReader_var reader_;
     DDS::DynamicType_ptr type_;
-    FastDdsListener* listener_;
+    OpenDdsListener* listener_;
     DataTypeConfiguration data_type_configuration_;
     DDS::DynamicData_ptr data_;
     std::atomic<bool> stop_;
@@ -85,8 +85,8 @@ protected:
     std::vector<types::TextDatum> string_data_info_;
 };
 
-} /* namespace fastdds */
+} /* namespace opendds */
 } /* namespace plotjuggler */
 } /* namespace eprosima */
 
-#endif // _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_FASTDDS_READERHANDLER_HPP_
+#endif // _EPROSIMA_PLOTJUGGLEROPENDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_OPENDDS_READERHANDLER_HPP_

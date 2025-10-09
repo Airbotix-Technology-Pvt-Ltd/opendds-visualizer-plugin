@@ -1,44 +1,44 @@
 // Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
-// This file is part of eProsima Fast DDS Visualizer Plugin.
+// This file is part of eProsima OpenDDS Visualizer Plugin.
 //
-// eProsima Fast DDS Visualizer Plugin is free software: you can redistribute it and/or modify
+// eProsima OpenDDS Visualizer Plugin is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// eProsima Fast DDS Visualizer Plugin is distributed in the hope that it will be useful,
+// eProsima OpenDDS Visualizer Plugin is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with eProsima Fast DDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
+// along with eProsima OpenDDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * @file Handler.hpp
  */
 
-#ifndef _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_FASTDDS_HANDLER_HPP_
-#define _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_FASTDDS_HANDLER_HPP_
+#ifndef _EPROSIMA_PLOTJUGGLEROPENDDS_PLUGIN_PLUGINS_DATASTREAMERPLUGIN_OPENDDS_HANDLER_HPP_
+#define _EPROSIMA_PLOTJUGGLEROPENDDS_PLUGIN_PLUGINS_DATASTREAMERPLUGIN_OPENDDS_HANDLER_HPP_
 
 #include <memory>
 
-#include "FastDdsListener.hpp"
+#include "OpenDdsListener.hpp"
 #include "Participant.hpp"
 
 namespace eprosima {
 namespace plotjuggler {
-namespace fastdds {
+namespace opendds {
 
 /**
- * @brief This class handles every Fast DDS entity required.
+ * @brief This class handles every OpenDDS entity required.
  *
- * It create, manage and destroy every Fast DDS entity that the process requires to instantiate.
- * The discovery and user data received is transmitted through a FastDdsListener object.
+ * It create, manage and destroy every OpenDDS entity that the process requires to instantiate.
+ * The discovery and user data received is transmitted through an OpenDdsListener object.
  *
  * FUTURE WORK:
- * Use a specific thread to call callbacks instead of using Fast DDS thread
+ * Use a specific thread to call callbacks instead of using OpenDDS thread
  */
 class Handler
 {
@@ -49,7 +49,7 @@ public:
     ////////////////////////////////////////////////////
 
     Handler(
-            FastDdsListener* listener);
+            OpenDdsListener* listener);
 
     virtual ~Handler();
 
@@ -94,13 +94,13 @@ protected:
 
     std::unique_ptr<Participant> participant_;
 
-    FastDdsListener* listener_;
+    OpenDdsListener* listener_;
 
     std::set<std::string> xml_data_types_paths_added_;
 };
 
-} /* namespace fastdds */
+} /* namespace opendds */
 } /* namespace plotjuggler */
 } /* namespace eprosima */
 
-#endif // _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_FASTDDS_HANDLER_HPP_
+#endif // _EPROSIMA_PLOTJUGGLEROPENDDS_PLUGIN_PLUGINS_DATASTREAMERPLUGIN_OPENDDS_HANDLER_HPP_

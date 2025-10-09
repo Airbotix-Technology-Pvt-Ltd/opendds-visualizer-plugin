@@ -12,7 +12,7 @@
 
 namespace eprosima {
 namespace plotjuggler {
-namespace fastdds {
+namespace opendds {
 
 using namespace DDS;
 using namespace OpenDDS::DCPS;
@@ -78,7 +78,7 @@ void ReaderHandlerDeleter::operator()(ReaderHandler* reader) const
 Participant::Participant(
         DomainId_t domain_id,
         std::shared_ptr<TopicDataBase> discovery_database,
-        FastDdsListener* listener)
+        OpenDdsListener* listener)
     : listener_(listener)
     , discovery_database_(discovery_database)
     , dyn_types_info_(std::make_shared<TopicIds>())
@@ -399,6 +399,6 @@ DDS::StatusMask Participant::default_listener_mask_()
     return OpenDDS::DCPS::DEFAULT_STATUS_MASK;
 }
 
-} /* namespace fastdds */
+} /* namespace opendds */
 } /* namespace plotjuggler */
 } /* namespace eprosima */

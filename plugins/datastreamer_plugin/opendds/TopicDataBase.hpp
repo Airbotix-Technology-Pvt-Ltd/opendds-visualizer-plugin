@@ -19,8 +19,8 @@
  * @file TopicDataBase.hpp
  */
 
-#ifndef _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_FASTDDS_TOPICDATABASE_HPP_
-#define _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_FASTDDS_TOPICDATABASE_HPP_
+#ifndef _EPROSIMA_PLOTJUGGLEROPENDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_OPENDDS_TOPICDATABASE_HPP_
+#define _EPROSIMA_PLOTJUGGLEROPENDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_OPENDDS_TOPICDATABASE_HPP_
 
 #include <unordered_map>
 #include <tuple>
@@ -30,7 +30,7 @@
 
 namespace eprosima {
 namespace plotjuggler {
-namespace fastdds {
+namespace opendds {
 
 /**
  * @brief TODO
@@ -45,8 +45,8 @@ using DataTypeIdInfo = std::pair<DataTypeNameType, DataTypeId>;
 using TopicDataBase = std::unordered_map<TopicName, DataTypeRegistryInfo>;
 using TopicIds = std::unordered_map<TopicName, DataTypeIdInfo>;
 
-} /* namespace fastdds */
+} /* namespace opendds */
 } /* namespace plotjuggler */
 } /* namespace eprosima */
 
-#endif // _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_FASTDDS_TOPICDATABASE_HPP_
+#endif // _EPROSIMA_PLOTJUGGLEROPENDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_OPENDDS_TOPICDATABASE_HPP_

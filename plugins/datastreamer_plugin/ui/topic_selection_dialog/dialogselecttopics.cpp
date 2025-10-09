@@ -36,7 +36,7 @@ namespace ui {
 
 DialogSelectTopics::DialogSelectTopics(
         const Configuration& configuration,
-        std::shared_ptr<fastdds::TopicDataBase> discovery_database,
+        std::shared_ptr<opendds::TopicDataBase> discovery_database,
         UiListener* listener,
         QWidget* parent /* = nullptr */)
     : QDialog(parent)

@@ -5,8 +5,8 @@
  * @file Participant.hpp
  */
 
-#ifndef _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_FASTDDS_PARTICIPANTS_HPP_
-#define _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_FASTDDS_PARTICIPANTS_HPP_
+#ifndef _EPROSIMA_PLOTJUGGLEROPENDDS_PLUGIN_PLUGINS_DATASTREAMERPLUGIN_OPENDDS_PARTICIPANTS_HPP_
+#define _EPROSIMA_PLOTJUGGLEROPENDDS_PLUGIN_PLUGINS_DATASTREAMERPLUGIN_OPENDDS_PARTICIPANTS_HPP_
 
 #include <functional>
 #include <memory>
@@ -22,13 +22,13 @@
 #include "utils/utils.hpp"
 #include "utils/Exception.hpp"
 #include "utils/DataTypeConfiguration.hpp"
-#include "FastDdsListener.hpp"
+#include "OpenDdsListener.hpp"
 #include "ReaderHandler.hpp"
 #include "TopicDataBase.hpp"
 
 namespace eprosima {
 namespace plotjuggler {
-namespace fastdds {
+namespace opendds {
 
 class ReaderHandlerDeleter
 {
@@ -50,7 +50,7 @@ using ReaderHandlerReference = std::unique_ptr<ReaderHandler, ReaderHandlerDelet
  * @brief This class handles every OpenDDS entity required.
  *
  * It creates, manages, and destroys every OpenDDS entity that the process requires to instantiate.
- * The discovery and user data received is transmitted through a FastDdsListener object.
+ * The discovery and user data received is transmitted through an OpenDdsListener object.
  */
 class Participant
 {
@@ -58,7 +58,7 @@ public:
     Participant(
             DDS::DomainId_t domain_id,
             std::shared_ptr<TopicDataBase> discovery_database,
-            FastDdsListener* listener);
+            OpenDdsListener* listener);
 
     virtual ~Participant();
 
@@ -112,7 +112,7 @@ protected:
 
     std::shared_ptr<TopicDataBase> discovery_database_;
     std::shared_ptr<TopicIds> dyn_types_info_;
-    FastDdsListener* listener_;
+    OpenDdsListener* listener_;
 
     DDS::DomainParticipantFactory_var factory_;
     DDS::DomainParticipant_var participant_;
@@ -120,8 +120,8 @@ protected:
     std::unordered_map<std::string, ReaderHandlerReference> readers_;
 };
 
-} /* namespace fastdds */
+} /* namespace opendds */
 } /* namespace plotjuggler */
 } /* namespace eprosima */
 
-#endif // _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_FASTDDS_PARTICIPANTS_HPP_
+#endif // _EPROSIMA_PLOTJUGGLEROPENDDS_PLUGIN_PLUGINS_DATASTREAMERPLUGIN_OPENDDS_PARTICIPANTS_HPP_
