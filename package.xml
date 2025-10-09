@@ -5,23 +5,22 @@
 
     <name>opendds_visualizer_plugin</name>
     <version>2.2.0</version>
-    <description>Fast DDS Visualizer Plugin for PlotJuggler</description>
+    <description>OpenDDS Visualizer Plugin for PlotJuggler</description>
 
     <maintainer email="support@eProsima.comm">eProsima Support</maintainer>
 
     <license file="LICENSE">GPLv3</license>
 
     <url type="website">https://www.eprosima.com/</url>
-    <url type="bugtracker">https://github.com/eProsima/fastdds-visualizer-plugin/issues</url>
-    <url type="repository">https://github.com/eProsima/fastdds-visualizer-plugin</url>
+    <url type="bugtracker">https://github.com/Airbotix-Technology-Pvt-Ltd/opendds-visualizer-plugin/issues</url>
+    <url type="repository">https://github.com/Airbotix-Technology-Pvt-Ltd/opendds-visualizer-plugin</url>
 
     <author email="javierparis@eprosima.com">Javier Paris</author>
 
     <buildtool_depend>cmake</buildtool_depend>
 
-    <!-- Fast DDS dependencies -->
-    <depend>fastcdr</depend>
-    <depend>fastdds</depend>
+    <!-- OpenDDS dependencies -->
+    <depend>opendds</depend>
 
     <!-- Plotjuggler -->
     <depend>plotjuggler</depend>

@@ -1,19 +1,19 @@
 # Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 #
-# This file is part of eProsima Fast DDS Visualizer Plugin.
+# This file is part of eProsima OpenDDS Visualizer Plugin.
 #
-# eProsima Fast DDS Visualizer Plugin is free software: you can redistribute it and/or modify
+# eProsima OpenDDS Visualizer Plugin is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# eProsima Fast DDS Visualizer Plugin is distributed in the hope that it will be useful,
+# eProsima OpenDDS Visualizer Plugin is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with eProsima Fast DDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
+# along with eProsima OpenDDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
 
 ###############################################################################
 # CMake build rules for DDS Visualizer Plugin Documentation
@@ -32,17 +32,17 @@ set(PRODUCT_VERSION_STR ${PRODUCT_MAJOR_VERSION}.${PRODUCT_MINOR_VERSION}.${PROD
 ###############################################################################
 # Project
 ###############################################################################
-project(fastdds_visualizer_plugin_docs)
+project(opendds_visualizer_plugin_docs)
 set(PROJECT_VERSION_MAJOR "${PRODUCT_MAJOR_VERSION}")
 set(PROJECT_VERSION_MINOR "${PRODUCT_MINOR_VERSION}")
 set(PROJECT_VERSION_PATCH "${PRODUCT_PATCH_VERSION}")
 set(PROJECT_VERSION "${PRODUCT_VERSION_STR}")
 
-set(PROJECT_NAME_LARGE "Fast DDS Visualizer Plugin Documentation")
+set(PROJECT_NAME_LARGE "OpenDDS Visualizer Plugin Documentation")
 string(TOUPPER "${PROJECT_NAME}" PROJECT_NAME_UPPER)
-set(${PROJECT_NAME}_DESCRIPTION_SUMMARY "ReadTheDocs documentation of Fast DDS Visualizer Plugin")
+set(${PROJECT_NAME}_DESCRIPTION_SUMMARY "ReadTheDocs documentation of OpenDDS Visualizer Plugin")
 set(${PROJECT_NAME}_DESCRIPTION
-    "ReadTheDocs documentation of Fast DDS Visualizer Plugin")
+    "ReadTheDocs documentation of OpenDDS Visualizer Plugin")
 
 message(STATUS "Configuring ${PROJECT_NAME_LARGE}")
 message(STATUS "Version: ${PROJECT_VERSION}")
@@ -88,16 +88,16 @@ install(DIRECTORY ${DOCS_OUTPUT_HTML_DIR}
     DESTINATION docs/${PROJECT_NAME}/sphinx
     COMPONENT monitor-sphinx
     PATTERN ".buildinfo" EXCLUDE)
-set(CPACK_COMPONENT_monitor-sphinx_DISPLAY_NAME "Fast DDS Visualizer Plugin Sphinx")
+set(CPACK_COMPONENT_monitor-sphinx_DISPLAY_NAME "OpenDDS Visualizer Plugin Sphinx")
 set(CPACK_COMPONENT_monitor-sphinx_DESCRIPTION
-    "eProsima Fast DDS Visualizer Plugin documentation in ${DOCS_BUILDER} format")
+    "eProsima OpenDDS Visualizer Plugin documentation in ${DOCS_BUILDER} format")
 set(CPACK_COMPONENTS_ALL ${CPACK_COMPONENTS_ALL} ${DOCS_BUILDER})
 
 
 ###############################################################################
 # Test
 ###############################################################################
-option(BUILD_DOCUMENTATION_TESTS "Build Fast DDS Visualizer Plugin documentation tests" OFF)
+option(BUILD_DOCUMENTATION_TESTS "Build OpenDDS Visualizer Plugin documentation tests" OFF)
 
 if (BUILD_TESTS)
     set(BUILD_DOCUMENTATION_TESTS ON)

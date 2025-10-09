@@ -1,0 +1,16 @@
+repositories:
+
+    opendds:
+        type: git
+        url: https://github.com/objectcomputing/OpenDDS.git
+        version: master
+
+    plotjuggler:
+        type: git
+        url: https://github.com/facontidavide/PlotJuggler.git
+        version: 3.9.1
+
+    opendds_visualizer_plugin:
+        type: git
+        url: https://github.com/Airbotix-Technology-Pvt-Ltd/opendds-visualizer-plugin.git
+        version: main
