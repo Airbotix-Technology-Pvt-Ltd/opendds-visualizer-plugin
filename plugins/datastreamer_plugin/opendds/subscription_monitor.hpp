@@ -2,10 +2,14 @@
 #define __DDS_SUBSCRIPTION_MONITOR_H__
 
 #include "dds_manager.h"
-#include <airbotix_base/Logger.hpp>
+#include "utils/Logger.hpp"
 
 #include <string>
 #include <functional>
+
+namespace airbotix {
+namespace plotjuggler {
+namespace opendds {
 
 /**
  * @ Listener class which receives information about subscribers on the bus.
@@ -44,5 +48,9 @@ private:
     DDS::DomainParticipant_ptr participant_;
     std::function<void(const std::string&)> m_newTopicCallback;
 };
+
+} // namespace opendds
+} // namespace plotjuggler
+} // namespace airbotix
 
 #endif // __DDS_SUBSCRIPTION_MONITOR_H__

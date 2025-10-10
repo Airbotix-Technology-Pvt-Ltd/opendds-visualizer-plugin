@@ -2,9 +2,13 @@
 #define __DDS_PUBLICATION_MONITOR_H__
 
 #include "dds_manager.h"
-#include <airbotix_base/Logger.hpp>
+#include "utils/Logger.hpp"
 
 #include <string>
+
+namespace airbotix {
+namespace plotjuggler {
+namespace opendds {
 
 /**
  * @brief Listener class which receives information about publishers on the bus.
@@ -30,7 +34,11 @@ private:
     bool get_dynamic_type(DDS::DynamicType_var& type, const DDS::BuiltinTopicKey_t& key,
                           const char* topic_name, const char* type_name);
 
-    std::function<void(const std::string&)> m_newTopicCallback;
+    std::function<void(const std::string&, const std::string&)> m_newTopicCallback;
 };
+
+} // namespace opendds
+} // namespace plotjuggler
+} // namespace airbotix
 
 #endif // __DDS_PUBLICATION_MONITOR_H__

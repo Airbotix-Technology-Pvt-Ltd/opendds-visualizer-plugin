@@ -1,6 +1,21 @@
 #ifndef __DDS_TOPIC_MONITOR_H__
 #define __DDS_TOPIC_MONITOR_H__
 
+#include "dynamic_meta_struct.hpp"
+#include "dds_manager.h"
+#include "dds_data.hpp"
+#include "qos_dictionary.h"
+#include "open_dynamic_data.hpp"
+#include "OpenDdsListener.hpp"
+
+#include <utils/Logger.hpp>
+#include <utils/parsers.hpp>
+#include <utils/dynamic_types_utils.hpp>
+
+
+#include <dds/DCPS/EncapsulationHeader.h>
+#include <dds/DCPS/Message_Block_Ptr.h>
+#include <dds/DCPS/XTypes/DynamicTypeSupport.h>
 #include <dds/DCPS/TopicDescriptionImpl.h>
 #include <dds/DCPS/OwnershipManager.h>
 #include <dds/DCPS/EntityImpl.h>
@@ -8,11 +23,14 @@
 #include <dds/DdsDcpsCoreC.h>
 #include <dds/DCPS/Serializer.h>
 #include <tao/AnyTypeCode/TypeCode.h>
-
-#include <airbotix_base/Logger.hpp>
+#include <nlohmann/json.hpp>
 
 #include <memory>
 #include <string>
+
+namespace airbotix {
+namespace plotjuggler {
+namespace opendds {
 
 /**
  * @brief Topic monitor for receiving raw DDS data samples.
@@ -24,7 +42,7 @@ public:
      * @brief Constructor for the DDS topic monitor.
      * @param[in] topicName The name of the topic to monitor.
      */
-    TopicMonitor(const std::string& topicName, DDS::DomainParticipant_ptr participant, FastDdsListener* listener);
+    TopicMonitor(const std::string& topicName, DDS::DomainParticipant_ptr participant, OpenDdsListener* listener, const DataTypeConfiguration& data_type_configuration);
 
     /**
      * @brief Close the topic monitor.
@@ -64,7 +82,7 @@ public:
     class DataReaderListenerImpl : public virtual OpenDDS::DCPS::LocalObject<DDS::DataReaderListener>
     {
     public:
-      DataReaderListenerImpl(TopicMonitor& monitor) : m_monitor(monitor) {}
+      DataReaderListenerImpl(TopicMonitor& monitor) : m_monitor(monitor) {} 
       virtual void on_requested_deadline_missed(DDS::DataReader_ptr,
                                                 const DDS::RequestedDeadlineMissedStatus&) {}
 
@@ -106,15 +124,15 @@ public:
      */
     virtual ~TopicMonitor();
 
+    std::vector<types::DatumLabel> numeric_data_series_names() const;
+
+    std::vector<types::DatumLabel> string_data_series_names() const;
+
 private:
 
     void create_data_structures_(const nlohmann::json& data);
 
-    void update_listener(double timestamp, const nlohmann::json& data)
-
-    std::vector<types::DatumLabel> numeric_data_series_names() const;
-
-    std::vector<types::DatumLabel> string_data_series_names() const;
+    void update_listener(double timestamp, const nlohmann::json& data);
 
     DDS::DomainParticipant_ptr participant_;
     std::string m_topicName;
@@ -146,7 +164,12 @@ private:
     utils::TypeIntrospectionNumericStruct numeric_data_info_;
     utils::TypeIntrospectionStringStruct string_data_info_;
 
-    FastDdsListener* listener_;
+    OpenDdsListener* listener_;
+    DataTypeConfiguration data_type_configuration_;
 };
+
+} // namespace opendds
+} // namespace plotjuggler
+} // namespace airbotix
 
 #endif // __DDS_TOPIC_MONITOR_H__

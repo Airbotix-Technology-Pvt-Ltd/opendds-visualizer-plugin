@@ -1,19 +1,19 @@
-# Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (airbotix).
 #
-# This file is part of eProsima Fast DDS Visualizer Plugin.
+# This file is part of airbotix openDDS Visualizer Plugin.
 #
-# eProsima Fast DDS Visualizer Plugin is free software: you can redistribute it and/or modify
+# airbotix openDDS Visualizer Plugin is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# eProsima Fast DDS Visualizer Plugin is distributed in the hope that it will be useful,
+# airbotix openDDS Visualizer Plugin is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with eProsima Fast DDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
+# along with airbotix openDDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
 
 ###############################################################################
 # Configure CMake values
@@ -32,7 +32,7 @@ project(opendds_visualizer_plugin_datastream_plugin)
 ###############################################################################
 # Load external projects
 ###############################################################################
-# Load eProsima packages
+# Load airbotix packages
 find_package(OpenDDS REQUIRED)
 add_subdirectory(thirdparty/OpenDDW)
 
@@ -97,13 +97,25 @@ set (ALL_LIBRARY_SOURCES
         "utils/Logger.hpp"
 
         # DataStreamer files
-        "datastreamer/FastDdsDataStreamer.cpp"
-        "datastreamer/FastDdsDataStreamer.hpp"
+        "datastreamer/OpenDdsDataStreamer.cpp"
+        "datastreamer/OpenDdsDataStreamer.hpp"
 
-        # fastdds files
+        # opendds files
+        "opendds/dds_data.cpp"
+        "opendds/dds_data.hpp"
+        "opendds/dynamic_meta_struct.cpp"
+        "opendds/dynamic_meta_struct.hpp"
+        "opendds/OpenDdsListener.hpp"
         "opendds/Handler.cpp"
         "opendds/Handler.hpp"
-        "opendds/
+        "opendds/open_dynamic_data.cpp"
+        "opendds/open_dynamic_data.hpp"
+        "opendds/publication_monitor.cpp"
+        "opendds/publication_monitor.hpp"
+        "opendds/subscription_monitor.cpp"
+        "opendds/subscription_monitor.hpp"
+        "opendds/topic_monitor.cpp"
+        "opendds/topic_monitor.hpp"
 
         # UI files
         "ui/topic_selection_dialog/dialogselecttopics.cpp"

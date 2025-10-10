@@ -1,11 +1,15 @@
-#include "lib/subscription_monitor.h"
-#include "lib/dds_data.h"
+#include "subscription_monitor.hpp"
+#include "dds_data.hpp"
 #include "dds_manager.h"
 
 #include <dds/DCPS/BuiltInTopicUtils.h>
 
 #include <iostream>
 #include <stdexcept>
+
+namespace airbotix {
+namespace plotjuggler {
+namespace opendds {
 
 SubscriptionMonitor::SubscriptionMonitor(DDS::DomainParticipant_ptr participant)
     : m_dataReader(nullptr)
@@ -107,3 +111,7 @@ void SubscriptionMonitor::on_data_available(DDS::DataReader_ptr reader) {
 
     dataReader->return_loan(msgList, infoSeq);
 }
+
+} // namespace opendds
+} // namespace plotjuggler
+} // namespace airbotix

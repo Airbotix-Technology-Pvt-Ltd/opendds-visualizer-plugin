@@ -1,19 +1,19 @@
-// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (Airbotix).
 //
-// This file is part of eProsima Fast DDS Visualizer Plugin.
+// This file is part of Airbotix OpenDDS Visualizer Plugin.
 //
-// eProsima Fast DDS Visualizer Plugin is free software: you can redistribute it and/or modify
+// Airbotix OpenDDS Visualizer Plugin is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// eProsima Fast DDS Visualizer Plugin is distributed in the hope that it will be useful,
+// Airbotix OpenDDS Visualizer Plugin is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with eProsima Fast DDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
+// along with Airbotix OpenDDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * @file utils.cpp
@@ -24,7 +24,7 @@
 
 #include "utils.hpp"
 
-namespace eprosima {
+namespace airbotix {
 namespace plotjuggler {
 namespace utils {
 
@@ -91,7 +91,8 @@ std::vector<std::string> get_files_in_dir(
 {
     return get_files_in_dir_regex(
         dir_path,
-        std::regex(".*\\." + file_extension + "$"),
+        std::regex(".*\\."
+ + file_extension + ".*$ "),
         recursive);
 }
 
@@ -138,4 +139,4 @@ QStringList get_files_in_dir(
 
 } /* namespace utils */
 } /* namespace plotjuggler */
-} /* namespace eprosima */
+} /* namespace airbotix */

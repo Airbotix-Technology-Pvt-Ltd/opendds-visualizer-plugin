@@ -2,9 +2,13 @@
 #include <dds/DCPS/XTypes/DynamicTypeSupport.h>
 #include <iostream>
 
-#include "lib/dds_data.h"
+#include "dds_data.hpp"
 #include "dds_manager.h"
-#include "lib/publication_monitor.h"
+#include "publication_monitor.hpp"
+
+namespace airbotix {
+namespace plotjuggler {
+namespace opendds {
 
 //------------------------------------------------------------------------------
 PublicationMonitor::PublicationMonitor(DDS::DomainParticipant_ptr participant)
@@ -149,3 +153,7 @@ bool PublicationMonitor::get_dynamic_type(DDS::DynamicType_var& type,
     dts->register_type(participant, type_name);
     return true;
 }
+
+} // namespace opendds
+} // namespace plotjuggler
+} // namespace airbotix

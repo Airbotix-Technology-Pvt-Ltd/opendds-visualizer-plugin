@@ -1,19 +1,19 @@
-// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (Airbotix).
 //
-// This file is part of eProsima Fast DDS Visualizer Plugin.
+// This file is part of Airbotix OpenDDS Visualizer Plugin.
 //
-// eProsima Fast DDS Visualizer Plugin is free software: you can redistribute it and/or modify
+// Airbotix OpenDDS Visualizer Plugin is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// eProsima Fast DDS Visualizer Plugin is distributed in the hope that it will be useful,
+// Airbotix OpenDDS Visualizer Plugin is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with eProsima Fast DDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
+// along with Airbotix OpenDDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * @file dialogselecttopics.cpp
@@ -30,13 +30,12 @@
 #include "utils/utils.hpp"
 #include "utils/Exception.hpp"
 
-namespace eprosima {
+namespace airbotix {
 namespace plotjuggler {
 namespace ui {
 
 DialogSelectTopics::DialogSelectTopics(
         const Configuration& configuration,
-        std::shared_ptr<fastdds::TopicDataBase> discovery_database,
         UiListener* listener,
         QWidget* parent /* = nullptr */)
     : QDialog(parent)
@@ -348,7 +347,7 @@ void DialogSelectTopics::reset_to_configuration_()
     // Remove every topic
     clean_topics_list_();
 
-    // FastDDS configuration
+    // OpenDDS configuration
     // Set current domain
     on_connectionToDomain(configuration_.domain_id);
 
@@ -486,4 +485,4 @@ void DialogSelectTopics::unregistered_type_change_format_(
 
 } /* namespace ui */
 } /* namespace plotjuggler */
-} /* namespace eprosima */
+} /* namespace airbotix */

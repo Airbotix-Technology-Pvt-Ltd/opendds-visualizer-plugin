@@ -9,6 +9,10 @@
 #include <string>
 #include <vector>
 
+namespace airbotix {
+namespace plotjuggler {
+namespace opendds {
+
 /// Simplified noncopyable without Boost
 class noncopyable
 {
@@ -320,6 +324,10 @@ std::shared_ptr<OpenDynamicData> CreateOpenDynamicData(CORBA::TypeCode_var typeC
     const OpenDDS::DCPS::Encoding::Kind encodingKind,
     const OpenDDS::DCPS::Extensibility extensibility,
     const std::weak_ptr<OpenDynamicData> parent = std::weak_ptr<OpenDynamicData>());
+
+} // namespace opendds
+} // namespace plotjuggler
+} // namespace airbotix
 
 #endif
 

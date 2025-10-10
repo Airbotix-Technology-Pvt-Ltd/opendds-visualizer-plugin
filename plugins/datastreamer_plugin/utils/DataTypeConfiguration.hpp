@@ -1,42 +1,42 @@
-// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (Airbotix).
 //
-// This file is part of eProsima Fast DDS Visualizer Plugin.
+// This file is part of Airbotix OpenDDS Visualizer Plugin.
 //
-// eProsima Fast DDS Visualizer Plugin is free software: you can redistribute it and/or modify
+// Airbotix OpenDDS Visualizer Plugin is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// eProsima Fast DDS Visualizer Plugin is distributed in the hope that it will be useful,
+// Airbotix OpenDDS Visualizer Plugin is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with eProsima Fast DDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
+// along with Airbotix OpenDDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * @file Configuration.hpp
  */
 
-#ifndef _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_UTILS_DATATYPECONFIGURATION_HPP_
-#define _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_UTILS_DATATYPECONFIGURATION_HPP_
+#ifndef _AIRBOTIX_PLOTJUGGLEROPENDDSPLUGIN_PLUGINS_UTILS_DATATYPECONFIGURATION_HPP_
+#define _AIRBOTIX_PLOTJUGGLEROPENDDSPLUGIN_PLUGINS_UTILS_DATATYPECONFIGURATION_HPP_
 
 #include <QStringList>
 #include <QSettings>
 #include <QDomDocument>
 
-namespace eprosima {
+namespace airbotix {
 namespace plotjuggler {
 
 /**
- * @brief This class handles every Fast DDS entity required.
+ * @brief This class handles every OpenDDS entity required.
  *
- * It create, manage and destroy every Fast DDS entity that the process requires to instantiate.
+ * It create, manage and destroy every OpenDDS entity that the process requires to instantiate.
  * The discovery and user data received is transmitted through a UiListener object.
  *
  * FUTURE WORK:
- * Use a specific thread to call callbacks instead of using Fast DDS thread
+ * Use a specific thread to call callbacks instead of using OpenDDS thread
  */
 struct DataTypeConfiguration
 {
@@ -46,6 +46,6 @@ struct DataTypeConfiguration
 };
 
 } /* namespace plotjuggler */
-} /* namespace eprosima */
+} /* namespace airbotix */
 
-#endif // _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_UTILS_DATATYPECONFIGURATION_HPP_
+#endif // _AIRBOTIX_PLOTJUGGLEROPENDDSPLUGIN_PLUGINS_UTILS_DATATYPECONFIGURATION_HPP_

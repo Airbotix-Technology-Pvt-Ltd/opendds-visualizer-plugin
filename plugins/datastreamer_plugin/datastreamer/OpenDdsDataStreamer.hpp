@@ -1,26 +1,26 @@
-// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (Airbotix).
 //
-// This file is part of eProsima Fast DDS Visualizer Plugin.
+// This file is part of Airbotix OpenDDS Visualizer Plugin.
 //
-// eProsima Fast DDS Visualizer Plugin is free software: you can redistribute it and/or modify
+// Airbotix OpenDDS Visualizer Plugin is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// eProsima Fast DDS Visualizer Plugin is distributed in the hope that it will be useful,
+// Airbotix OpenDDS Visualizer Plugin is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with eProsima Fast DDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
+// along with Airbotix OpenDDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * @file FastDdsDataStreamer.hpp
+ * @file OpenDdsDataStreamer.hpp
  */
 
-#ifndef _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_DATASTREAMER_DATASTREAMER_HPP_
-#define _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_DATASTREAMER_DATASTREAMER_HPP_
+#ifndef _AIRBOTIX_PLOTJUGGLEROPENDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_DATASTREAMER_DATASTREAMER_HPP_
+#define _AIRBOTIX_PLOTJUGGLEROPENDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_DATASTREAMER_DATASTREAMER_HPP_
 
 #include <QtPlugin>
 
@@ -29,43 +29,43 @@
 #include "ui/topic_selection_dialog/dialogselecttopics.h"
 #include "ui/topic_selection_dialog/Configuration.hpp"
 #include "ui/topic_selection_dialog/UiListener.hpp"
-#include "fastdds/FastDdsListener.hpp"
-#include "fastdds/Handler.hpp"
+#include "opendds/OpenDdsListener.hpp"
+#include "opendds/Handler.hpp"
 #include "utils/types.hpp"
 
-namespace eprosima {
+namespace airbotix {
 namespace plotjuggler {
 namespace datastreamer {
 
 /**
  * @brief TODO
  */
-class FastDdsDataStreamer :
+class OpenDdsDataStreamer :
     public PJ::DataStreamer,
-    public fastdds::FastDdsListener,
+    public opendds::OpenDdsListener,
     public ui::UiListener
 {
     //! Macros for Qt Plugin and Object
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "facontidavide.PlotJuggler3.FastDDSVisualizerPlugin")
+    Q_PLUGIN_METADATA(IID "facontidavide.PlotJuggler3.OpenDDSVisualizerPlugin")
     Q_INTERFACES(PJ::DataStreamer)
 
 public:
 
     /**
-     * @brief Construct a new Fast Dds Data Streamer object
+     * @brief Construct a new OpenDds Data Streamer object
      *
      * @note This object is constructed at the beginning of the execution of the program,
      * even before the plugin is selected and started.
      */
-    FastDdsDataStreamer();
+    OpenDdsDataStreamer();
 
     /**
-     * @brief Construct a new Fast Dds Data Streamer object
+     * @brief Construct a new OpenDds Data Streamer object
      *
      * @note This occurs once at the end of the process when the UI closes
      */
-    ~FastDdsDataStreamer();
+    ~OpenDdsDataStreamer();
 
 
     ////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ public:
             const QDomElement& parent_element) override;
 
     ////////////////////////////////////////////////////
-    // FASTDDS LISTENER METHODS
+    // OPENDDS LISTENER METHODS
     ////////////////////////////////////////////////////
     virtual void on_data_available() override;
 
@@ -118,7 +118,7 @@ public:
     // STATIC METHODS AND PUBLIC MEMBERS
     ////////////////////////////////////////////////////
 
-    constexpr static const char* PLUGIN_NAME_ = "Fast DDS Visualizer Plugin";
+    constexpr static const char* PLUGIN_NAME_ = "OpenDDS Visualizer Plugin";
 
 protected:
 
@@ -137,17 +137,17 @@ protected:
 
     ui::Configuration configuration_;
 
-    fastdds::Handler fastdds_handler_;
+    opendds::Handler opendds_handler_;
 
     ui::DialogSelectTopics select_topics_dialog_;
 
     bool running_;
 
-    constexpr static const char* CONFIGURATION_SETTINGS_PREFIX_ = "FastDDSVisualizerPlugin";
+    constexpr static const char* CONFIGURATION_SETTINGS_PREFIX_ = "OpenDDSVisualizerPlugin";
 };
 
 } /* namespace datastreamer */
 } /* namespace plotjuggler */
-} /* namespace eprosima */
+} /* namespace airbotix */
 
-#endif // _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_DATASTREAMER_DATASTREAMER_HPP_
+#endif // _AIRBOTIX_PLOTJUGGLEROPENDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_DATASTREAMER_DATASTREAMER_HPP_

@@ -1,8 +1,12 @@
-#include "lib/parsers.h"
+#include "parsers.hpp"
 
 #include <iostream>
 
 using json = nlohmann::json;
+
+namespace airbotix {
+namespace plotjuggler {
+namespace opendds {
 
 // Forward declarations
 static json parse_dynamic_data_primitive(const DDS::DynamicData_var& data, DDS::MemberId id, OpenDDS::XTypes::TypeKind tk);
@@ -153,11 +157,11 @@ json parse_dynamic_data(const DDS::DynamicData_var& data) {
     }
 }
 
-json parse_dynamic_data(const std::shared_ptr<OpenDynamicData>& data) {
+json parse_dynamic_data(const std::shared_ptr<airbotix::plotjuggler::opendds::OpenDynamicData>& data) {
     json result = json::object();
     const size_t childCount = data->getLength();
     for (size_t i = 0; i < childCount; i++) {
-        const std::shared_ptr<OpenDynamicData> child = data->getMember(i);
+        const std::shared_ptr<airbotix::plotjuggler::opendds::OpenDynamicData> child = data->getMember(i);
         if (!child) continue;
 
         std::string name = child->getFullName();
@@ -199,3 +203,7 @@ json parse_dynamic_data(const std::shared_ptr<OpenDynamicData>& data) {
     }
     return result;
 }
+
+} // namespace opendds
+} // namespace plotjuggler
+} // namespace airbotix

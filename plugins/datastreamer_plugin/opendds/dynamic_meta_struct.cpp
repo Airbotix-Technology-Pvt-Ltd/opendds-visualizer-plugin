@@ -1,10 +1,13 @@
-#include "dynamic_meta_struct.h"
-#include "open_dynamic_data.h"
+#include "dynamic_meta_struct.hpp"
+#include "open_dynamic_data.hpp"
 #include <cctype>
 
+namespace airbotix {
+namespace plotjuggler {
+namespace opendds {
 
 //------------------------------------------------------------------------------
-DynamicMetaStruct::DynamicMetaStruct(const std::shared_ptr<OpenDynamicData> oddInfo)
+DynamicMetaStruct::DynamicMetaStruct(const std::shared_ptr<airbotix::plotjuggler::opendds::OpenDynamicData> oddInfo)
     : m_sample(oddInfo)
 {}
 
@@ -40,7 +43,7 @@ OpenDDS::DCPS::Value DynamicMetaStruct::getValue(
         return 0;
     }
 
-    const std::shared_ptr<OpenDynamicData> member = m_sample->getMember(fieldSpec);
+    const std::shared_ptr<airbotix::plotjuggler::opendds::OpenDynamicData> member = m_sample->getMember(fieldSpec);
     if (!member)
     {
         std::cerr << "Filter error: "
@@ -59,7 +62,7 @@ OpenDDS::DCPS::Value DynamicMetaStruct::getValue(
         case CORBA::tk_ulonglong: newValue = member->getValue<CORBA::ULongLong>(); break;
         case CORBA::tk_long: newValue = member->getValue<CORBA::Long>(); break;
         case CORBA::tk_ulong: newValue = member->getValue<CORBA::ULong>(); break;
-        case CORBA::tk_boolean: newValue = member->getValue<CORBA::ULong>(); break;
+        case CORBA::tk_boolean: newValue = member->getValue<CORBA::ULong>(); break; // Note: boolean is often represented as an integer type
         case CORBA::tk_short: newValue = member->getValue<CORBA::Short>(); break;
         case CORBA::tk_ushort: newValue = member->getValue<CORBA::UShort>(); break;
         case CORBA::tk_octet: newValue = member->getValue<CORBA::Octet>(); break;
@@ -175,6 +178,9 @@ void DynamicMetaStruct::deallocate(void*) const
     std::cout << "DynamicMetaStruct::deallocate" << std::endl;
 }
 
+} // namespace opendds
+} // namespace plotjuggler
+} // namespace airbotix
 
 /**
  * @}

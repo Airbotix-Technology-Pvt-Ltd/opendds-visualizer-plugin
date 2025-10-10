@@ -4,7 +4,11 @@
 #include <dds/DCPS/FilterEvaluator.h> // For OpenDDS::DCPS::MetaStruct
 #include <dds/DCPS/TypeSupportImpl.h>
 
-class OpenDynamicData;
+namespace airbotix {
+namespace plotjuggler {
+namespace opendds {
+
+class OpenDynamicData; // Forward declaration within the namespace
 
 
 /**
@@ -25,7 +29,7 @@ public:
      * @brief Constructor for the MetaStruct implementation of OpenDynamicData.
      * @param[in] sample Create the MetaStruct for this sample.
      */
-    DynamicMetaStruct(const std::shared_ptr<OpenDynamicData> sample);
+    DynamicMetaStruct(const std::shared_ptr<airbotix::plotjuggler::opendds::OpenDynamicData> sample);
 
     /**
      * @brief Destructor for the MetaStruct implementation of OpenDynamicData.
@@ -121,10 +125,13 @@ public:
 private:
 
     /// Stores the sample type information and values.
-    const std::shared_ptr<OpenDynamicData> m_sample;
+    const std::shared_ptr<airbotix::plotjuggler::opendds::OpenDynamicData> m_sample;
 
 };
 
+} // namespace opendds
+} // namespace plotjuggler
+} // namespace airbotix
 
 #endif
 

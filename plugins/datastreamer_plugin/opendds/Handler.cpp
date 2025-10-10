@@ -1,42 +1,40 @@
-// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (Airbotix).
 //
-// This file is part of eProsima Fast DDS Visualizer Plugin.
+// This file is part of Airbotix OpenDDS Visualizer Plugin.
 //
-// eProsima Fast DDS Visualizer Plugin is free software: you can redistribute it and/or modify
+// Airbotix OpenDDS Visualizer Plugin is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// eProsima Fast DDS Visualizer Plugin is distributed in the hope that it will be useful,
+// Airbotix OpenDDS Visualizer Plugin is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with eProsima Fast DDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
+// along with Airbotix OpenDDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * @file Handler.hpp
  */
 
-#include <fastdds/dds/log/Log.hpp>
-
 #include "Handler.hpp"
 
-namespace eprosima {
+namespace airbotix {
 namespace plotjuggler {
-namespace fastdds {
+namespace opendds {
 
 ////////////////////////////////////////////////////
 // CREATION & DESTRUCTION
 ////////////////////////////////////////////////////
 
 Handler::Handler(
-        FastDdsListener* listener)
+        OpenDdsListener* listener)
     : listener_(listener)
 {
     // TOOD remove
-    // Activate fast dds warning logger
+    // Activate opendds warning logger
     airbotix::dds::init_logging_from_env();
     // Do nothing
 }
@@ -108,13 +106,11 @@ void Handler::start_discovery(){
             }
             DDS_DEBUG(get_dds_log_prefix(), "Discovered publication on topic: %s", topicName.c_str());
         });
-
-    DDS_INFO(get_dds_log_prefix(), "Logging started in directory: %s", g_log_directory.c_str());
 }
 
 
 void Handler::create_subscription(
-        const std::string& topicName)
+        const std::string& topicName, const DataTypeConfiguration& data_type_configuration)
 {
     DDS_DEBUG(get_dds_log_prefix(), "Creating TopicMonitor and thread for topic: %s", topicName.c_str());
 
@@ -124,7 +120,7 @@ void Handler::create_subscription(
     }
 
     try {
-        auto monitor = std::make_shared<TopicMonitor>(topicName, g_participant_, listener_);
+        auto monitor = std::make_shared<TopicMonitor>(topicName, g_participant_, listener_, data_type_configuration);
         g_topic_monitors[topicName] = monitor;
 
         DDS_INFO(get_dds_log_prefix(), "Created TopicMonitor and spawned thread for topic: %s", topicName.c_str());
@@ -169,6 +165,6 @@ std::vector<types::DatumLabel> Handler::string_data_series_names() const
     return names;
 }
 
-} /* namespace fastdds */
+} /* namespace opendds */
 } /* namespace plotjuggler */
-} /* namespace eprosima */
+} /* namespace airbotix */

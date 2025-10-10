@@ -1,5 +1,5 @@
-#ifndef __DDS_DATA_MONITOR_H__
-#define __DDS_DATA_MONITOR_H__
+#ifndef _AIRBOTIX_PLOTJUGGLEROPENDDSPLUGIN_PLUGINS_OPENDDS_DDS_DATA_HPP_
+#define _AIRBOTIX_PLOTJUGGLEROPENDDSPLUGIN_PLUGINS_OPENDDS_DDS_DATA_HPP_
 
 #ifdef WIN32
 #pragma warning(push, 0)  // No DDS warnings
@@ -9,7 +9,7 @@
 #include <dds/DdsDcpsCoreC.h>
 #include <dds/DdsDynamicDataC.h>
 #include <tao/AnyTypeCode/TypeCode.h>
-#include <dds_manager.hpp>
+#include "dds_manager.h"
 
 #ifdef WIN32
 #pragma warning(pop)
@@ -22,6 +22,10 @@
 #include <memory>
 #include <cstdint>
 #include <variant>
+
+namespace airbotix {
+namespace plotjuggler {
+namespace opendds {
 
 class OpenDynamicData;
 
@@ -187,4 +191,8 @@ private:
     static std::mutex m_topicMutex;
 };
 
-#endif
+} // namespace opendds
+} // namespace plotjuggler
+} // namespace airbotix
+
+#endif // _AIRBOTIX_PLOTJUGGLEROPENDDSPLUGIN_PLUGINS_OPENDDS_DDS_DATA_HPP_

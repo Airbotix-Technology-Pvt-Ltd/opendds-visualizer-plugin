@@ -1,51 +1,51 @@
-// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (Airbotix).
 //
-// This file is part of eProsima Fast DDS Visualizer Plugin.
+// This file is part of Airbotix OpenDDS Visualizer Plugin.
 //
-// eProsima Fast DDS Visualizer Plugin is free software: you can redistribute it and/or modify
+// Airbotix OpenDDS Visualizer Plugin is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// eProsima Fast DDS Visualizer Plugin is distributed in the hope that it will be useful,
+// Airbotix OpenDDS Visualizer Plugin is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with eProsima Fast DDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
+// along with Airbotix OpenDDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * @file Handler.hpp
  */
 
-#ifndef _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_FASTDDS_HANDLER_HPP_
-#define _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_FASTDDS_HANDLER_HPP_
+#ifndef _AIRBOTIX_PLOTJUGGLEROPENDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_OPENDDS_HANDLER_HPP_
+#define _AIRBOTIX_PLOTJUGGLEROPENDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_OPENDDS_HANDLER_HPP_
 
 #include <memory>
 #include <map>      // ← ADD
 #include <vector>   // ← ADD
 #include <string>   // ← ADD
 
-#include "dds_data.h"
-#include "publication_monitor.h"
-#include "subscription_monitor.h"
-#include "topic_monitor.h"
+#include "dds_data.hpp"
+#include "publication_monitor.hpp"
+#include "subscription_monitor.hpp"
+#include "topic_monitor.hpp"
 
-#include "FastDdsListener.hpp"
+#include "OpenDdsListener.hpp"
 
-namespace eprosima {
+namespace airbotix {
 namespace plotjuggler {
-namespace fastdds {
+namespace opendds {
 
 /**
- * @brief This class handles every Fast DDS entity required.
+ * @brief This class handles every OpenDDS entity required.
  *
- * It create, manage and destroy every Fast DDS entity that the process requires to instantiate.
- * The discovery and user data received is transmitted through a FastDdsListener object.
+ * It create, manage and destroy every OpenDDS entity that the process requires to instantiate.
+ * The discovery and user data received is transmitted through a OpenDdsListener object.
  *
  * FUTURE WORK:
- * Use a specific thread to call callbacks instead of using Fast DDS thread
+ * Use a specific thread to call callbacks instead of using OpenDDS thread
  */
 class Handler
 {
@@ -56,7 +56,7 @@ public:
     ////////////////////////////////////////////////////
 
     Handler(
-            FastDdsListener* listener);
+            OpenDdsListener* listener);
 
     virtual ~Handler();
 
@@ -73,7 +73,7 @@ public:
     void start_discovery();
 
     void create_subscription(
-            const std::string& topicName);
+            const std::string& topicName, const DataTypeConfiguration& data_type_configuration);
 
     void reset();
 
@@ -97,7 +97,7 @@ protected:
     DDS::DomainParticipant_var g_participant_;
     DDS::Subscriber_var g_subscriber;
 
-    FastDdsListener* listener_;
+    OpenDdsListener* listener_;
 
     std::unique_ptr<SubscriptionMonitor> m_subscriptionMonitor;
     std::unique_ptr<PublicationMonitor> m_publicationMonitor;
@@ -105,8 +105,8 @@ protected:
     std::map<std::string, std::shared_ptr<TopicMonitor>> g_topic_monitors;
 };
 
-} /* namespace fastdds */
+} /* namespace opendds */
 } /* namespace plotjuggler */
-} /* namespace eprosima */
+} /* namespace airbotix */
 
-#endif // _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_FASTDDS_HANDLER_HPP_
+#endif // _AIRBOTIX_PLOTJUGGLEROPENDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_OPENDDS_HANDLER_HPP_

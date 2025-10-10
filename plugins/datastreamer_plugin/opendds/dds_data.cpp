@@ -1,13 +1,17 @@
-#include "lib/dds_data.h"
+#include "dds_data.hpp"
 #include "dds_manager.h"
 #include "qos_dictionary.h"
-#include "lib/open_dynamic_data.h"
+#include "open_dynamic_data.hpp"
 
 #include <dds/DCPS/Service_Participant.h>
 #include <dds/DCPS/XTypes/Utils.h>
 #include <tao/AnyTypeCode/Any.h>
 
 #include <iostream>
+
+namespace airbotix {
+namespace plotjuggler {
+namespace opendds {
 
 std::unique_ptr<DDSManager> CommonData::m_ddsManager;
 std::map<std::string, std::map<std::string, std::shared_ptr<OpenDynamicData>>> CommonData::m_samples;
@@ -336,3 +340,7 @@ void TopicInfo::dumpTypeCode(const char* cdrBuffer, size_t typeCodeSize) const {
     }
     printf("\n=== End CDR Dump ===\n");
 }
+
+} // namespace opendds
+} // namespace plotjuggler
+} // namespace airbotix

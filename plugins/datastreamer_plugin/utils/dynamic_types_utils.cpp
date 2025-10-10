@@ -1,19 +1,19 @@
-// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (Airbotix).
 //
-// This file is part of eProsima Fast DDS Visualizer Plugin.
+// This file is part of Airbotix OpenDDS Visualizer Plugin.
 //
-// eProsima Fast DDS Visualizer Plugin is free software: you can redistribute it and/or modify
+// Airbotix OpenDDS Visualizer Plugin is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// eProsima Fast DDS Visualizer Plugin is distributed in the hope that it will be useful,
+// Airbotix OpenDDS Visualizer Plugin is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with eProsima Fast DDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
+// along with Airbotix OpenDDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * @file dynamic_types_utils.cpp
@@ -30,12 +30,11 @@
 #include "dynamic_types_utils.hpp"
 #include "Exception.hpp"
 #include "utils.hpp"
+#include "Logger.hpp"
 
-namespace eprosima {
+namespace airbotix {
 namespace plotjuggler {
 namespace utils {
-using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastdds::rtps;
 
 template std::vector<types::DatumLabel> get_introspection_type_names<TypeIntrospectionNumericStruct>(
         const TypeIntrospectionNumericStruct& type_names_struct);
@@ -132,7 +131,7 @@ void get_formatted_data(
     }
     else
     {
-        EPROSIMA_LOG_ERROR(DYNAMIC_TYPES_UTILS, "Data type not supported");
+        DDS_ERROR("DYNAMIC_TYPES_UTILS", "Data type not supported");
         return;
     }
 }
@@ -157,4 +156,4 @@ bool is_kind_string(
 
 } /* namespace utils */
 } /* namespace plotjuggler */
-} /* namespace eprosima */
+} /* namespace airbotix */

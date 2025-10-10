@@ -1,19 +1,19 @@
-// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (Airbotix).
 //
-// This file is part of eProsima Fast DDS Visualizer Plugin.
+// This file is part of Airbotix OpenDDS Visualizer Plugin.
 //
-// eProsima Fast DDS Visualizer Plugin is free software: you can redistribute it and/or modify
+// Airbotix OpenDDS Visualizer Plugin is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// eProsima Fast DDS Visualizer Plugin is distributed in the hope that it will be useful,
+// Airbotix OpenDDS Visualizer Plugin is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with eProsima Fast DDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
+// along with Airbotix OpenDDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * @file Configuration.cpp
@@ -22,7 +22,7 @@
 #include "Configuration.hpp"
 #include "utils/utils.hpp"
 
-namespace eprosima {
+namespace airbotix {
 namespace plotjuggler {
 namespace ui {
 
@@ -80,7 +80,7 @@ void Configuration::save_default_settings(
         const QString& prefix) const
 {
     // Get default Qt settings
-    QSettings settings("eProsima", prefix);
+    QSettings settings("Airbotix", prefix);
 
     settings.setValue(prefix + MAX_ARRAY_SIZE_SETTINGS_TAG, data_type_configuration.max_array_size);
     settings.setValue(prefix + USE_HEADER_STAMP_SETTINGS_TAG, data_type_configuration.use_header_stamp);
@@ -93,7 +93,7 @@ void Configuration::load_default_settings(
         const QString& prefix)
 {
     // Get default Qt settings
-    QSettings settings("eProsima", prefix);
+    QSettings settings("Airbotix", prefix);
 
     data_type_configuration.max_array_size = settings.value(prefix + MAX_ARRAY_SIZE_SETTINGS_TAG,
                     data_type_configuration.max_array_size).toInt();
@@ -107,4 +107,4 @@ void Configuration::load_default_settings(
 
 } /* namespace ui */
 } /* namespace plotjuggler */
-} /* namespace eprosima */
+} /* namespace airbotix */

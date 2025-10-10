@@ -1,53 +1,53 @@
-// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (Airbotix).
 //
-// This file is part of eProsima Fast DDS Visualizer Plugin.
+// This file is part of Airbotix OpenDDS Visualizer Plugin.
 //
-// eProsima Fast DDS Visualizer Plugin is free software: you can redistribute it and/or modify
+// Airbotix OpenDDS Visualizer Plugin is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// eProsima Fast DDS Visualizer Plugin is distributed in the hope that it will be useful,
+// Airbotix OpenDDS Visualizer Plugin is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with eProsima Fast DDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
+// along with Airbotix OpenDDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * @file FastDdsDataStreamer.cpp
+ * @file OpenDdsDataStreamer.cpp
  */
 
-#include "FastDdsDataStreamer.hpp"
+#include "OpenDdsDataStreamer.hpp"
 #include "ui/topic_selection_dialog/dialogselecttopics.h"
 #include "utils/utils.hpp"
 #include "utils/Exception.hpp"
 
-namespace eprosima {
+namespace airbotix {
 namespace plotjuggler {
 namespace datastreamer {
 
-FastDdsDataStreamer::FastDdsDataStreamer()
+OpenDdsDataStreamer::OpenDdsDataStreamer()
     : running_(false)
     , configuration_(QString(CONFIGURATION_SETTINGS_PREFIX_))
-    , fastdds_handler_(this)
+    , opendds_handler_(this)
     , select_topics_dialog_(
         configuration_, this)
 {
-    DEBUG("Create FastDdsDataStreamer");
+    DEBUG("Create OpenDdsDataStreamer");
 }
 
-FastDdsDataStreamer::~FastDdsDataStreamer()
+OpenDdsDataStreamer::~OpenDdsDataStreamer()
 {
-    DEBUG("Destroy FastDdsDataStreamer");
+    DEBUG("Destroy OpenDdsDataStreamer");
     shutdown();
 }
 
-bool FastDdsDataStreamer::start(
+bool OpenDdsDataStreamer::start(
         QStringList*)
 {
-    DEBUG("FastDdsDataStreamer::start");
+    DEBUG("OpenDdsDataStreamer::start");
 
     // Check if it is already running
     if (running_)
@@ -89,8 +89,8 @@ bool FastDdsDataStreamer::start(
     for (const auto& topic : topics)
     {
         // Create a subscription
-        fastdds_handler_.create_subscription(
-            utils::QString_to_string(topic));
+        opendds_handler_.create_subscription(
+            utils::QString_to_string(topic), configuration_.data_type_configuration);
     }
 
     // Get all series from topics and create them
@@ -101,7 +101,7 @@ bool FastDdsDataStreamer::start(
     return true;
 }
 
-void FastDdsDataStreamer::shutdown()
+void OpenDdsDataStreamer::shutdown()
 {
     DEBUG("Bye World");
 
@@ -110,42 +110,42 @@ void FastDdsDataStreamer::shutdown()
     {
         running_ = false;
 
-        // Reset FastDDS so DDS entities are destroyed
-        fastdds_handler_.reset();
+        // Reset OpenDDS so DDS entities are destroyed
+        opendds_handler_.reset();
         select_topics_dialog_.reset();
     }
 }
 
-bool FastDdsDataStreamer::isRunning() const
+bool OpenDdsDataStreamer::isRunning() const
 {
     return running_;
 }
 
-const char* FastDdsDataStreamer::name() const
+const char* OpenDdsDataStreamer::name() const
 {
     return PLUGIN_NAME_;
 }
 
-bool FastDdsDataStreamer::xmlSaveState(
+bool OpenDdsDataStreamer::xmlSaveState(
         QDomDocument& doc,
         QDomElement& plugin_elem) const
 {
     return configuration_.xmlSaveState(doc, plugin_elem);
 }
 
-bool FastDdsDataStreamer::xmlLoadState(
+bool OpenDdsDataStreamer::xmlLoadState(
         const QDomElement& parent_element)
 {
     return configuration_.xmlLoadState(parent_element);
 }
 
 ////////////////////////////////////////////////////
-// FASTDDS LISTENER METHODS
+// OPENDDS LISTENER METHODS
 ////////////////////////////////////////////////////
 
-void FastDdsDataStreamer::on_data_available()
+void OpenDdsDataStreamer::on_data_available()
 {
-    DEBUG("FastDdsDataStreamer on_data_available");
+    DEBUG("OpenDdsDataStreamer on_data_available");
 
     // Locking DataStream
     std::lock_guard<std::mutex> lock(mutex());
@@ -154,11 +154,11 @@ void FastDdsDataStreamer::on_data_available()
     create_series_();
 }
 
-void FastDdsDataStreamer::on_double_data_read(
+void OpenDdsDataStreamer::on_double_data_read(
         const std::vector<std::pair<std::string, double>>& data_per_topic_value,
         double timestamp)
 {
-    DEBUG("FastDdsDataStreamer on_double_data_read");
+    DEBUG("OpenDdsDataStreamer on_double_data_read");
 
     // Locking DataStream
     std::lock_guard<std::mutex> lock(mutex());
@@ -181,11 +181,11 @@ void FastDdsDataStreamer::on_double_data_read(
     emit dataReceived();
 }
 
-void FastDdsDataStreamer::on_string_data_read(
+void OpenDdsDataStreamer::on_string_data_read(
         const std::vector<std::pair<std::string, std::string>>& data_per_topic_value,
         double timestamp    )
 {
-    DEBUG("FastDdsDataStreamer on_string_data_read");
+    DEBUG("OpenDdsDataStreamer on_string_data_read");
 
     // Locking DataStream
     std::lock_guard<std::mutex> lock(mutex());
@@ -203,11 +203,11 @@ void FastDdsDataStreamer::on_string_data_read(
     emit dataReceived();
 }
 
-void FastDdsDataStreamer::on_topic_discovery(
+void OpenDdsDataStreamer::on_topic_discovery(
         const std::string& topic_name,
         const std::string& type_name)
 {
-    DEBUG("FastDdsDataStreamer topic_discovery_signal " << topic_name);
+    DEBUG("OpenDdsDataStreamer topic_discovery_signal " << topic_name);
 
     // Emit signal to UI so it is handled from Qt thread
     emit select_topics_dialog_.topic_discovery_signal(
@@ -220,10 +220,10 @@ void FastDdsDataStreamer::on_topic_discovery(
 // UI LISTENER METHODS
 ////////////////////////////////////////////////////
 
-void FastDdsDataStreamer::on_domain_connection(
+void OpenDdsDataStreamer::on_domain_connection(
         unsigned int domain_id)
 {
-    DEBUG("FastDdsDataStreamer on_domain_connection " << domain_id);
+    DEBUG("OpenDdsDataStreamer on_domain_connection " << domain_id);
     connect_to_domain_(domain_id);
 }
 
@@ -231,25 +231,25 @@ void FastDdsDataStreamer::on_domain_connection(
 // AUXILIAR METHODS
 ////////////////////////////////////////////////////
 
-void FastDdsDataStreamer::connect_to_domain_(
+void OpenDdsDataStreamer::connect_to_domain_(
         unsigned int domain_id)
 {
-    DEBUG("FastDdsDataStreamer connect_to_domain_ " << domain_id);
+    DEBUG("OpenDdsDataStreamer connect_to_domain_ " << domain_id);
 
     // Reset view and handler
     select_topics_dialog_.reset();
-    fastdds_handler_.reset();
+    opendds_handler_.reset();
 
     // Connect to domain
-    fastdds_handler_.connect_to_domain(domain_id);
+    opendds_handler_.connect_to_domain(domain_id);
     select_topics_dialog_.connect_to_domain(domain_id);
 }
 
-void FastDdsDataStreamer::create_series_()
+void OpenDdsDataStreamer::create_series_()
 {
     // Get all series from topics and create them
     // NUMERIC
-    std::vector<types::DatumLabel> numeric_series = fastdds_handler_.numeric_data_series_names();
+    std::vector<types::DatumLabel> numeric_series = opendds_handler_.numeric_data_series_names();
     for (const auto& series : numeric_series)
     {
         // Create a series
@@ -258,7 +258,7 @@ void FastDdsDataStreamer::create_series_()
     }
 
     // STRING
-    std::vector<types::DatumLabel> string_series = fastdds_handler_.string_data_series_names();
+    std::vector<types::DatumLabel> string_series = opendds_handler_.string_data_series_names();
     for (const auto& series : string_series)
     {
         // Create a series
@@ -269,4 +269,4 @@ void FastDdsDataStreamer::create_series_()
 
 } /* namespace datastreamer */
 } /* namespace plotjuggler */
-} /* namespace eprosima */
+} /* namespace airbotix */

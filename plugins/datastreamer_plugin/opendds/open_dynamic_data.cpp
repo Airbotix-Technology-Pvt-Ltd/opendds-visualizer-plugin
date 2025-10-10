@@ -2,7 +2,11 @@
 #include <iostream>
 #include <sstream>
 
-#include "lib/open_dynamic_data.h"
+#include "open_dynamic_data.hpp"
+
+namespace airbotix {
+namespace plotjuggler {
+namespace opendds {
 
 std::shared_ptr<OpenDynamicData> CreateOpenDynamicData(CORBA::TypeCode_var typeCode,
     const OpenDDS::DCPS::Encoding::Kind encodingKind,
@@ -1125,6 +1129,9 @@ void OpenDynamicData::populate()
 
 } // End OpenDynamicData::populate
 
+} // namespace opendds
+} // namespace plotjuggler
+} // namespace airbotix
 
 /**
  * @}

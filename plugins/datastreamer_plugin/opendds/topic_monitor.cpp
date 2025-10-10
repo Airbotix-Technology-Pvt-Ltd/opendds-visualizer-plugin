@@ -1,13 +1,4 @@
-#include "lib/topic_monitor.h"
-#include "lib/dynamic_meta_struct.h"
-#include "dds_manager.h"
-#include "lib/dds_data.h"
-#include "qos_dictionary.h"
-#include "lib/open_dynamic_data.h"
-
-#include <dds/DCPS/EncapsulationHeader.h>
-#include <dds/DCPS/Message_Block_Ptr.h>
-#include <dds/DCPS/XTypes/DynamicTypeSupport.h>
+#include "topic_monitor.hpp"
 
 #include <iostream>
 #include <stdexcept>
@@ -16,9 +7,13 @@
 #include <iomanip>
 #include <sstream>
 
-// ----- TopicMonitor implementation -----
+// ----- TopicMonitor implementation ----- 
 
-TopicMonitor::TopicMonitor(const std::string& topicName, DDS::DomainParticipant_ptr participant, FastDdsListener* listener)
+namespace airbotix {
+namespace plotjuggler {
+namespace opendds {
+
+TopicMonitor::TopicMonitor(const std::string& topicName, DDS::DomainParticipant_ptr participant, OpenDdsListener* listener, const DataTypeConfiguration& data_type_configuration)
     : participant_(participant)
     , m_topicName(topicName)
     , m_recorder_listener(OpenDDS::DCPS::make_rch<RecorderListener>(OpenDDS::DCPS::ref(*this)))
@@ -27,6 +22,7 @@ TopicMonitor::TopicMonitor(const std::string& topicName, DDS::DomainParticipant_
     , m_topic(nullptr)
     , m_paused(false)
     , listener_(listener)
+    , data_type_configuration_(data_type_configuration)
 {
     // Make sure we have an information object for this topic
     std::shared_ptr<TopicInfo> topicInfo = CommonData::getTopicInfo(topicName);
@@ -186,7 +182,7 @@ void TopicMonitor::on_sample_data_received(OpenDDS::DCPS::Recorder*,
     //sample->dump();
 
     // Get timestamp
-    double timestamp = utils::get_timestamp_seconds_numeric_value(infos[i].source_timestamp);
+    double timestamp = utils::get_timestamp_seconds_numeric_value(rawSample.source_timestamp_);
 
     // serialize data
     nlohmann::json serialized_data = parse_dynamic_data(sample);
@@ -273,13 +269,13 @@ void TopicMonitor::create_data_structures_(
 {
     // Create the structures to store the data introspection information AND the data itself
     utils::get_formatted_data(
-        topic_name(),
+        m_topicName,
         data_type_configuration_,
         numeric_data_info_,
         string_data_info_,
-        serialized_data);
+        data);
 
-    DEBUG("Completed type introspection created in topic: " << topic_name() << " with types: ");
+    DEBUG("Completed type introspection created in topic: " << m_topicName << " with types: ");
     for (const auto& info : numeric_data_info_)
     {
         DEBUG("\tNumeric: " << std::get<0>(info));
@@ -299,3 +295,7 @@ std::vector<types::DatumLabel> TopicMonitor::string_data_series_names() const
 {
     return utils::get_introspection_type_names(string_data_info_);
 }
+
+} // namespace opendds
+} // namespace plotjuggler
+} // namespace airbotix
