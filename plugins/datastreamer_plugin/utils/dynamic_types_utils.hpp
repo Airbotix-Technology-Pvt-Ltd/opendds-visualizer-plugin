@@ -22,9 +22,6 @@
 #ifndef _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_UTILS_DYNAMICTYPESUTILS_HPP_
 #define _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_UTILS_DYNAMICTYPESUTILS_HPP_
 
-#include <dds/DCPS/XTypes/DynamicDataImpl.h>
-#include <nlohmann/json.hpp>
-
 #include "utils/DataTypeConfiguration.hpp"
 #include "utils/types.hpp"
 
@@ -45,7 +42,7 @@ using TypeIntrospectionStringStruct = std::vector<types::TextDatum>;
  * @return all label names
  */
 template <typename T>
-std::vector<std::string> get_introspection_type_names(
+std::vector<types::DatumLabel> get_introspection_type_names(
         const T& type_names_struct);
 
 void get_formatted_data(
@@ -65,9 +62,6 @@ bool is_kind_boolean(
 bool is_kind_string(
         const nlohmann::json& data);
 
-DDS::ReturnCode_t serialize_data (
-        DDS::DynamicData_ptr data,
-        nlohmann::json& serialized_data);
 
 } /* namespace utils */
 } /* namespace plotjuggler */

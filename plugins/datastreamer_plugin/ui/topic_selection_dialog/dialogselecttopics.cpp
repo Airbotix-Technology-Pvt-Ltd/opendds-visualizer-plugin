@@ -41,7 +41,6 @@ DialogSelectTopics::DialogSelectTopics(
         QWidget* parent /* = nullptr */)
     : QDialog(parent)
     , ui(new Ui::DialogSelectTopics)  // This object is handled by Qt and it will be correctly deleted
-    , discovery_database_(discovery_database)
     , configuration_(configuration)
     , listener_(listener)
     , domain_id_connected_(configuration.domain_id) // This is initialized here as it does not come from configuration

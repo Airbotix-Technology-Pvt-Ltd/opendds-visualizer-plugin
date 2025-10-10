@@ -100,7 +100,7 @@ public:
     virtual void on_string_data_read(
             const std::vector<types::TextDatum>& data_per_topic_value,
             double timestamp) override;
-
+            
     virtual void on_topic_discovery(
             const std::string& topic_name,
             const std::string& type_name) override;
@@ -109,9 +109,6 @@ public:
     ////////////////////////////////////////////////////
     // UI LISTENER METHODS
     ////////////////////////////////////////////////////
-
-    virtual void on_xml_datatype_file_added(
-            const std::string& file_path) override;
 
     virtual void on_domain_connection(
             unsigned int domain_id) override;

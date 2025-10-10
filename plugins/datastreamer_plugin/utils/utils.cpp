@@ -1,34 +1,56 @@
 // Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
-// Licensed under the GNU General Public License v3.0.
+//
+// This file is part of eProsima Fast DDS Visualizer Plugin.
+//
+// eProsima Fast DDS Visualizer Plugin is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// eProsima Fast DDS Visualizer Plugin is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with eProsima Fast DDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * @file utils.cpp
  */
 
 #include <filesystem>
-#include <cstdio> // for snprintf
-#include <iomanip>
-#include <string>
+#include <sstream>
 
 #include "utils.hpp"
-#include "Logger.hpp"
-#include <dds/DCPS/TimeTypes.h> // for DDS::Time_t
 
 namespace eprosima {
 namespace plotjuggler {
 namespace utils {
 
-std::string get_timestamp_string(const DDS::Time_t& timestamp)
+std::string get_timestamp_string(const DDS::Time_t& ts)
 {
-    char buffer[32];
-    snprintf(buffer, sizeof(buffer), "%ld.%09u", timestamp.sec, timestamp.nanosec);
-    return std::string(buffer);
+    std::time_t sec = ts.sec;
+    uint32_t nanosec = ts.nanosec;
+    
+    std::tm tm_utc;
+#if defined(_WIN32) || defined(_WIN64)
+    gmtime_s(&tm_utc, &sec);
+#else
+    gmtime_r(&sec, &tm_utc);
+#endif
+    
+    std::ostringstream oss;
+    oss << std::put_time(&tm_utc, "%H:%M:%S");
+    oss << '.' << std::setfill('0') << std::setw(3) << (nanosec / 1000000);
+    
+    return oss.str();
 }
 
-double get_timestamp_seconds_numeric_value(
-        const DDS::Time_t& timestamp)
-{
-    return (timestamp.sec + (timestamp.nanosec * 1e-9));
+double get_timestamp_seconds_numeric_value(const DDS::Time_t& ts) {
+    // Convert seconds and nanoseconds to double
+    // Same formula as get_timestamp_seconds_numeric_value
+    return (ts.sec + (ts.nanosec * 1e-9));
 }
 
 std::string QString_to_string(
@@ -41,7 +63,7 @@ QString string_to_QString(
         const std::string& str)
 {
     // return QString::fromStdString(str);
-    return QString::fromUtf8(str.data(), str.size());
+    return QString::fromUtf8( str.data(), str.size());
 }
 
 std::string to_string(

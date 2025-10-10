@@ -1,38 +1,52 @@
 // Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
-// Licensed under the GNU General Public License v3.0.
+//
+// This file is part of eProsima Fast DDS Visualizer Plugin.
+//
+// eProsima Fast DDS Visualizer Plugin is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// eProsima Fast DDS Visualizer Plugin is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with eProsima Fast DDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
 
-#include "dynamic_types_utils.hpp"
-#include "utils/Exception.hpp"
-#include "utils.hpp"
-#include <dds/DCPS/JsonValueWriter.h>
-#include <rapidjson/stringbuffer.h>
-#include <rapidjson/writer.h>
-#include <dds/DCPS/XTypes/DynamicVwrite.h>  // For vwrite DynamicData overload
-#include <dds/DCPS/JsonValueWriter.h>
-#include <rapidjson/stringbuffer.h>
-#include <rapidjson/writer.h>
-#include "utils/Logger.hpp"
-
+/**
+ * @file dynamic_types_utils.cpp
+ */
 
 #include <algorithm>
 #include <iostream>
-#include <sstream>
 #include <limits>
+#include <random>
+#include <sstream>
+
+#include <nlohmann/json.hpp>
+
+#include "dynamic_types_utils.hpp"
+#include "Exception.hpp"
+#include "utils.hpp"
 
 namespace eprosima {
 namespace plotjuggler {
 namespace utils {
+using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastdds::rtps;
 
-template std::vector<std::string> get_introspection_type_names<TypeIntrospectionNumericStruct>(
+template std::vector<types::DatumLabel> get_introspection_type_names<TypeIntrospectionNumericStruct>(
         const TypeIntrospectionNumericStruct& type_names_struct);
-template std::vector<std::string> get_introspection_type_names<TypeIntrospectionStringStruct>(
+template std::vector<types::DatumLabel> get_introspection_type_names<TypeIntrospectionStringStruct>(
         const TypeIntrospectionStringStruct& type_names_struct);
 
 template <typename T>
-std::vector<std::string> get_introspection_type_names(
+std::vector<types::DatumLabel> get_introspection_type_names(
         const T& type_names_struct)
 {
-    std::vector<std::string> type_names;
+    std::vector<types::DatumLabel> type_names;
     for (const auto& type_name : type_names_struct)
     {
         type_names.push_back(type_name.first);
@@ -48,6 +62,7 @@ void get_formatted_data(
         const nlohmann::json& data,
         const std::string& separator /* = "/" */)
 {
+    // Check if the data is numeric or string
     if (is_kind_numeric(data))
     {
         numeric_data.push_back({base_type_name, data.get<double>()});
@@ -55,7 +70,8 @@ void get_formatted_data(
     }
     else if (is_kind_boolean(data))
     {
-        numeric_data.push_back({base_type_name, static_cast<double>(data.get<bool>())});
+        bool value = data.get<bool>();
+        numeric_data.push_back({base_type_name, static_cast<double>(value)});
         return;
     }
     else if (is_kind_string(data))
@@ -63,116 +79,80 @@ void get_formatted_data(
         string_data.push_back({base_type_name, data.get<std::string>()});
         return;
     }
+    // If the data is not numeric or string, it can be null or a complex structure (array or object)
     else if (data.is_null())
     {
+        // If the data is null, we do not add it to the introspection data
         return;
     }
     else if (data.is_array())
     {
+        // If the data is an array, check max array size and truncate if necessary
         if (data.size() >= data_type_configuration.max_array_size)
         {
             if (data_type_configuration.discard_large_arrays)
             {
-                DDS_DEBUG("dynamic_types_utils", "Discarding array %s of size %u",
-                          base_type_name.c_str(), static_cast<unsigned>(data.size()));
+                // Discard array
+                DEBUG("Discarding array " << base_type_name << " of size " << data.size());
                 return;
             }
             else
             {
-                DDS_DEBUG("dynamic_types_utils", "Truncating array %s of size %u to size %u",
-                          base_type_name.c_str(), static_cast<unsigned>(data.size()),
-                          data_type_configuration.max_array_size);
+                // Truncate array
+                DEBUG(
+                    "Truncating array " << base_type_name <<
+                        " of size " << data.size() <<
+                        " to size " << data_type_configuration.max_array_size);
             }
         }
-
         for (int i = 0; i < std::min(static_cast<unsigned>(data.size()), data_type_configuration.max_array_size); i++)
         {
-            get_formatted_data(base_type_name + "[" + std::to_string(i) + "]",
-                               data_type_configuration,
-                               numeric_data,
-                               string_data,
-                               data[i],
-                               separator);
+            get_formatted_data(
+                base_type_name + "[" + std::to_string(i) + "]",
+                data_type_configuration,
+                numeric_data,
+                string_data,
+                data[i],
+                separator);
         }
     }
     else if (data.is_object())
     {
+        // If the data is an object, we iterate over each key
         for (auto it = data.begin(); it != data.end(); ++it)
         {
-            get_formatted_data(base_type_name + separator + it.key(),
-                               data_type_configuration,
-                               numeric_data,
-                               string_data,
-                               it.value(),
-                               separator);
+            get_formatted_data(
+                base_type_name + separator + it.key(),
+                data_type_configuration,
+                numeric_data,
+                string_data,
+                it.value(),
+                separator);
         }
     }
     else
     {
-        DDS_ERROR("dynamic_types_utils", "Data type not supported in get_formatted_data for key: %s",
-                  base_type_name.c_str());
+        EPROSIMA_LOG_ERROR(DYNAMIC_TYPES_UTILS, "Data type not supported");
         return;
     }
 }
 
-bool is_kind_numeric(const nlohmann::json& data)
+bool is_kind_numeric(
+        const nlohmann::json& data)
 {
     return data.is_number();
 }
 
-bool is_kind_boolean(const nlohmann::json& data)
+bool is_kind_boolean(
+        const nlohmann::json& data)
 {
     return data.is_boolean();
 }
 
-bool is_kind_string(const nlohmann::json& data)
+bool is_kind_string(
+        const nlohmann::json& data)
 {
     return data.is_string();
-}
-
-DDS::ReturnCode_t serialize_data(
-    DDS::DynamicData_ptr data,
-    nlohmann::json& serialized_data)
-{
-    // Check for null data
-    if (!data)
-    {
-        DDS_ERROR("dynamic_types_utils", "Data is nullptr. Skipping serialization to JSON format.");
-        return DDS::RETCODE_NO_DATA;
-    }
-
-    // Validate DynamicType
-    DDS::DynamicType_ptr type = data->type();
-    if (!type)
-    {
-        DDS_ERROR("dynamic_types_utils", "DynamicData has no associated DynamicType.");
-        return DDS::RETCODE_ERROR;
-    }
-
-    // Create RapidJSON StringBuffer and Writer
-    rapidjson::StringBuffer buffer;
-    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-
-    // Serialize using to_json, which calls vwrite internally
-    DDS::ReturnCode_t retcode = OpenDDS::DCPS::to_json(data, writer);
-    if (retcode != DDS::RETCODE_OK)
-    {
-        DDS_ERROR("dynamic_types_utils", "Error encountered while serializing DynamicData to JSON: %d", retcode);
-        return retcode;
-    }
-
-    // Parse the JSON string into nlohmann::json
-    try
-    {
-        serialized_data = nlohmann::json::parse(buffer.GetString());
-    }
-    catch (const nlohmann::json::exception& e)
-    {
-        DDS_ERROR("dynamic_types_utils", "Failed to parse JSON string: %s", e.what());
-        return DDS::RETCODE_ERROR;
-    }
-
-    return DDS::RETCODE_OK;
 }
 
 } /* namespace utils */

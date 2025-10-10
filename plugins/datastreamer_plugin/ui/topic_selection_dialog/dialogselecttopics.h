@@ -137,8 +137,6 @@ protected:
     void unregistered_type_change_format_(
             const int row);
 
-    std::shared_ptr<fastdds::TopicDataBase> discovery_database_;
-
     Configuration configuration_;
 
     UiListener* listener_;

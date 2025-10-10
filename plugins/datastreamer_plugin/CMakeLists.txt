@@ -34,7 +34,7 @@ project(opendds_visualizer_plugin_datastream_plugin)
 ###############################################################################
 # Load eProsima packages
 find_package(OpenDDS REQUIRED)
-
+add_subdirectory(thirdparty/OpenDDW)
 
 # Load Qt requirements
 find_package(Qt5 REQUIRED COMPONENTS
@@ -101,14 +101,9 @@ set (ALL_LIBRARY_SOURCES
         "datastreamer/FastDdsDataStreamer.hpp"
 
         # fastdds files
-        "fastdds/Handler.cpp"
-        "fastdds/Handler.hpp"
-        "fastdds/FastDdsListener.hpp"
-        "fastdds/Participant.cpp"
-        "fastdds/Participant.hpp"
-        "fastdds/ReaderHandler.cpp"
-        "fastdds/ReaderHandler.hpp"
-        "fastdds/TopicDataBase.hpp"
+        "opendds/Handler.cpp"
+        "opendds/Handler.hpp"
+        "opendds/
 
         # UI files
         "ui/topic_selection_dialog/dialogselecttopics.cpp"
@@ -147,6 +142,7 @@ target_link_libraries(
         ${QT_LINK_LIBRARIES}
         ${plotjuggler_LIBRARIES}
         OpenDDS::Dcps
+        OpenDDW
     )
 
 

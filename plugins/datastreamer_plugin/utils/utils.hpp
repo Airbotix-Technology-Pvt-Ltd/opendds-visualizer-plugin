@@ -30,8 +30,6 @@
 #include <regex>
 #include <string>
 
-#include <dds/DdsDcpsSubscriptionC.h>      // SampleInfo lives here
-
 namespace eprosima {
 namespace plotjuggler {
 namespace utils {
@@ -46,11 +44,9 @@ namespace utils {
     #define WARNING(x) std::cout << " !!! " << x << std::endl
 #endif // ifdef NDEBUG
 
-std::string get_timestamp_string(
-        const DDS::Time_t& timestamp);
+std::string get_timestamp_string(const DDS::Time_t& ts);
 
-double get_timestamp_seconds_numeric_value(
-        const DDS::Time_t& timestamp);
+double get_timestamp_seconds_numeric_value(const DDS::Time_t& ts);
 
 std::string QString_to_string(
         const QString& str);

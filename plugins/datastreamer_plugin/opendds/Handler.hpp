@@ -23,9 +23,16 @@
 #define _EPROSIMA_PLOTJUGGLERFASTDDSPLUGIN_PLUGINS_DATASTREAMERPLUGIN_FASTDDS_HANDLER_HPP_
 
 #include <memory>
+#include <map>      // ← ADD
+#include <vector>   // ← ADD
+#include <string>   // ← ADD
+
+#include "dds_data.h"
+#include "publication_monitor.h"
+#include "subscription_monitor.h"
+#include "topic_monitor.h"
 
 #include "FastDdsListener.hpp"
-#include "Participant.hpp"
 
 namespace eprosima {
 namespace plotjuggler {
@@ -61,14 +68,12 @@ public:
     void connect_to_domain(
             const uint32_t domain);
 
-    void register_type_from_xml(
-            const std::string& xml_path);
+    void disconnect_from_domain();
+    
+    void start_discovery();
 
     void create_subscription(
-            const std::string& topic_name,
-            const DataTypeConfiguration& data_type_configuration);
-
-    std::shared_ptr<TopicDataBase> get_topic_data_base() const;
+            const std::string& topicName);
 
     void reset();
 
@@ -81,22 +86,23 @@ protected:
     ////////////////////////////////////////////////////
     // AUXILIAR INTERNAL METHODS
     ////////////////////////////////////////////////////
-
-    void clean_discovery_database_();
+    
+    const char* get_dds_log_prefix() const { return "OpenDDS Handler"; }
 
 
 
     ////////////////////////////////////////////////////
     // INTERNAL VARIABLES
     ////////////////////////////////////////////////////
-
-    std::shared_ptr<TopicDataBase> discovery_database_;
-
-    std::unique_ptr<Participant> participant_;
+    DDS::DomainParticipant_var g_participant_;
+    DDS::Subscriber_var g_subscriber;
 
     FastDdsListener* listener_;
 
-    std::set<std::string> xml_data_types_paths_added_;
+    std::unique_ptr<SubscriptionMonitor> m_subscriptionMonitor;
+    std::unique_ptr<PublicationMonitor> m_publicationMonitor;
+
+    std::map<std::string, std::shared_ptr<TopicMonitor>> g_topic_monitors;
 };
 
 } /* namespace fastdds */

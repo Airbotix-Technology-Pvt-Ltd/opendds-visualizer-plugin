@@ -52,7 +52,7 @@ public:
             const std::vector<types::NumericDatum>& numeric_data,
             double timestamp)
     {
-        DDS_DEBUG("FastDdsListener","Calling on_double_data_read");
+        DEBUG("Calling on_double_data_read");
         static_cast<void>(numeric_data);
         static_cast<void>(timestamp);
     }
@@ -61,7 +61,7 @@ public:
             const std::vector<types::TextDatum>& text_data,
             double timestamp)
     {
-        DDS_DEBUG("FastDdsListener","Calling on_string_data_read");
+        DEBUG("Calling on_string_data_read");
         static_cast<void>(text_data);
         static_cast<void>(timestamp);
     }
