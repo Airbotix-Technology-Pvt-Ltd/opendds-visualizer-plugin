@@ -92,6 +92,8 @@ set (ALL_LIBRARY_SOURCES
         # utils files
         "utils/utils.cpp"
         "utils/utils.hpp"
+        "utils/parsers.cpp"
+        "utils/parsers.hpp"
         "utils/dynamic_types_utils.cpp"
         "utils/dynamic_types_utils.hpp"
         "utils/Logger.hpp"
