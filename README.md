@@ -1,71 +1,128 @@
-[![Fast DDS Visualizer Plugin](resources/images/github_banner_visualizer.png)](https://www.eprosima.com/middleware/tools/fast-dds-visualizer)
+# OpenDDS Visualizer Plugin for PlotJuggler
 
-<br>
+The *OpenDDS Visualizer Plugin* is a specialized plugin designed for the *PlotJuggler* application. PlotJuggler is a powerful graphical desktop application that provides comprehensive visualization capabilities for data series, time series, and X-Y plots. Beyond visualization, it offers robust data management features including data import and export functionality, custom and built-in data manipulation functions, and data series merging capabilities. Additionally, the software supports multiple different layouts with dynamic, rich, and user-friendly customization options.
 
-<div class="menu" align="center">
-    <strong>
-        <a href="https://eprosima.com/index.php/downloads-all">Download</a>
-        <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-        <a href="https://plotjuggler-fastdds-plugins.readthedocs.io/en/latest/">Docs</a>
-        <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-        <a href="https://eprosima.com/index.php/company-all/news">News</a>
-        <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-        <a href="https://x.com/EProsima">X</a>
-        <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-        <a href="mailto:info@eprosima.com">Contact Us</a>
-    </strong>
-</div>
+The *OpenDDS Visualizer Plugin* enables users to visualize topic-related data directly from a DDS network. Users can select multiple topics from the discovered topics currently running in the DDS network. These selected topics are automatically divided by their values using data type introspection technology, allowing each individual value to be visualized and managed separately. This functionality empowers users to quickly visualize the detailed data content being exchanged across the network in various different ways.
 
-<br><br>
+## Key Features
 
-<div class="badges" align="center">
-    <a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html"><img alt="License" src="https://img.shields.io/github/license/eProsima/fastdds-visualizer-plugin.svg"/></a>
-    <a href="https://github.com/eProsima/fastdds-visualizer-plugin/releases"><img alt="Releases" src="https://img.shields.io/github/v/release/eProsima/fastdds-visualizer-plugin?sort=semver"/></a>
-    <a href="https://github.com/eProsima/fastdds-visualizer-plugin/issues"><img alt="Issues" src="https://img.shields.io/github/issues/eProsima/fastdds-visualizer-plugin.svg"/></a>
-    <a href="https://github.com/eProsima/fastdds-visualizer-plugin/network/members"><img alt="Forks" src="https://img.shields.io/github/forks/eProsima/fastdds-visualizer-plugin.svg"/></a>
-    <a href="https://github.com/eProsima/fastdds-visualizer-plugin/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/eProsima/fastdds-visualizer-plugin.svg"/></a>
-    <a href="https://plotjuggler-fastdds-plugins.readthedocs.io"><img alt="Documentation badge" src="https://img.shields.io/readthedocs/plotjuggler-fastdds-plugins.svg"/></a>
-</div>
+The *OpenDDS Visualizer Plugin* provides the following comprehensive features:
 
-<br><br>
+1. **Data Type Introspection**: By leveraging *OpenDDS Dynamic XTypes*, this plugin enables automatic discovery of topic data types and visualization of data content using the corresponding appropriate data type structure.
 
-*eProsima Fast DDS Visualizer Plugin* is a plugin for the *PlotJuggler* application.
-PlotJuggler is a graphical desktop application providing visualization features
-of data series, time series, X-Y plots.
-It also adds data management features, such as
-data import and export, custom and built-in data manipulation functions,
-data series merges, etc.
-Also, this software supports many different layouts, with dynamic, rich and user-friendly customization.
+2. **DDS Configurations**: Multiple different configurations can be established to specify the *Domain Id* and to select specific *DDS Topics* for visualization purposes.
 
-*Fast DDS Visualizer Plugin* allows users to visualize topic-related data from a DDS network.
-The user can select several topics from the discovered topics running in the DDS network.
-These topics will be divided by values using data type introspection,
-and each value could be visualized and managed separately, allowing the user to quickly visualize
-in different ways the detailed data content that is being
-exchanged in the network.
+3. **Complete PlotJuggler Feature Integration**: This plugin seamlessly integrates with all PlotJuggler features, enabling users to create rich, sophisticated graphs from advanced data manipulations.
 
-*eProsima Fast DDS Visualizer Plugin* supports the following features:
+## Commercial Support
 
-1. **Data type introspection**: by using *Fast DDS Dynamic Types*,
-   this plugin allows to discover the data type of the topic,
-    and to visualize the data content using the corresponding data type.
-1. **DDS Configurations**: Different configurations can be set to choose the *Domain Id* and to
-   select specific *DDS Topics* to be visualized.
-1. **All PlotJuggler features**: This plugin composes nicely with all the PlotJuggler features,
-   so that users can create rich graphs from sophisticated data manipulations.
+Looking for commercial support? Contact us at shubham.garg@airbotix.in
 
-## Commercial support
-
-Looking for commercial support? Write us to info@eprosima.com
-
-Find more about us at [eProsima’s webpage](https://eprosima.com/).
+Learn more about our services at [airbotix's webpage](https://airbotix.in/).
 
 ## Documentation
 
-You can access the documentation online, which is hosted on [Read the Docs](https://plotjuggler-fastdds-plugins.readthedocs.io/en/latest/).
+Documentation is currently in development (To Do).
+
+### Reference Documentation
 
 * [Installation Manual](https://plotjuggler-fastdds-plugins.readthedocs.io/en/latest/rst/installation/linux.html)
-* [Getting Started](https://plotjuggler-fastdds-plugins.readthedocs.io/en/latest/rst/getting_started/tutorial.html)
+* [Getting Started Guide](https://plotjuggler-fastdds-plugins.readthedocs.io/en/latest/rst/getting_started/tutorial.html)
 * [User Manual](https://plotjuggler-fastdds-plugins.readthedocs.io/en/latest/rst/user_manual/start_plugin.html)
 * [Developer Manual](https://plotjuggler-fastdds-plugins.readthedocs.io/en/latest/rst/developer_manual/installation/sources/linux.html)
 * [Release Notes](https://plotjuggler-fastdds-plugins.readthedocs.io/en/latest/rst/notes/notes.html)
+
+## Credits
+
+This plugin has been adapted from the [fastdds-visualizer-plugin](https://github.com/eProsima/fastdds-visualizer-plugin) and the OpenDDS Monitor project at https://github.com/OpenDDS/opendds-monitor
+
+---
+
+# OpenDDS Visualizer Plugin - Installation and Usage Guide
+
+## Prerequisites and Setup
+
+When working in a minimal container environment, before installing `qt5-default` and `libqt5websockets5-dev`, you must first add the universe repository, as many Qt development packages are hosted there. This is why `software-properties-common` is required as the initial step.
+
+### System Setup Instructions
+
+Execute the following commands in sequence:
+
+```shell
+apt update
+apt install -y software-properties-common
+add-apt-repository universe
+apt update
+```
+
+### Install Qt Packages
+
+After adding the universe repository, install the required Qt packages:
+
+```shell
+apt install -y qtbase5-dev libqt5websockets5-dev libqt5x11extras5-dev
+```
+
+### Install Additional Dependencies
+
+Install ASIO and TinyXML2 libraries:
+
+```shell
+apt install libasio-dev libtinyxml2-dev
+```
+
+### Required Qt Packages Summary
+
+To recap, the following Qt packages are essential for your container:
+
+* **qtbase5-dev** → Core Qt framework
+* **libqt5websockets5-dev** → WebSockets support
+* **libqt5x11extras5-dev** → X11 integration
+
+## Building the Plugin
+
+### Clone the plugin
+```
+git clone --recursive git@github.com:Airbotix-Technology-Pvt-Ltd/opendds-visualizer-plugin.git
+```
+### Install Build Tools
+
+First, install the required GCC compiler version:
+
+```shell
+apt install g++-11
+```
+
+### Build Process
+
+Build the plugin using colcon with specific compiler versions:
+
+```shell
+CC=/usr/bin/gcc-11 CXX=/usr/bin/g++-11 colcon build --cmake-args
+```
+
+## Running PlotJuggler with OpenDDS Plugin
+
+The `OpenDDS Visualizer Plugin` for PlotJuggler enables real-time visualization of data published on an OpenDDS network. It provides a seamless way to inspect and plot numeric and string data from your DDS topics.
+
+### Usage
+
+1.  **Launch PlotJuggler:**
+    ```bash
+    plotjuggler
+    ```
+    If the build was completed using colcon, ensure you source all projects first:
+    ```bash
+    source install/setup.bash
+    ```
+    If the build was performed using CMake directly, extend the following environment variables with your installation `lib/` and `bin/` paths:
+    ```bash
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/install/lib
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/OpenDDS/lib:/opt/OpenDDS/ACE_wrappers/lib
+    export PATH=$PATH:~/install/bin
+    ```
+2.  **Load the Plugin:** In PlotJuggler, navigate to `DataStreamer` -> `Load DataStreamer` and select `OpenDDS Visualizer Plugin`.
+3.  **Connect to DDS Domain:** A dialog will prompt you to enter the DDS Domain ID. Provide the correct ID and click `Connect`.
+4.  **Select Topics:** Another dialog will display a list of discovered DDS topics. Select the topics whose data you want to visualize and click `Start`.
+
+The plugin will then begin streaming the data from your chosen DDS topics, and you can configure PlotJuggler to display the desired fields.
