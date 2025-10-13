@@ -8,4 +8,4 @@ repositories:
     fastdds_visualizer_plugin:
         type: git
         url: https://github.com/Airbotix-Technology-Pvt-Ltd/opendds-visualizer-plugin
-        version: feature/OpenDDS
+        version: opendds

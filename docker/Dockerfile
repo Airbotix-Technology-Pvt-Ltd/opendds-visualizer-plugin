@@ -39,7 +39,7 @@ RUN pip3 install -U \
 # Set workspace root for build
 WORKDIR /DDS-Visualizer-Plugin
 
-RUN wget https://raw.githubusercontent.com/Airbotix-Technology-Pvt-Ltd/opendds-visualizer-plugin/main/opendds_visualizer_plugin.repos && \
+RUN wget https://raw.githubusercontent.com/Airbotix-Technology-Pvt-Ltd/opendds-visualizer-plugin/opendds/opendds_visualizer_plugin.repos && \
     vcs import src < opendds_visualizer_plugin.repos
 
 RUN colcon build --cmake-args
