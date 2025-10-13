@@ -53,16 +53,18 @@ transport_type=rtps_udp
 EOF
 
 # Add environment variables to .bashrc
-RUN echo "source ~/DDS-Visualizer-Plugin/install/setup.bash" >> ~/.bashrc && \
-    echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:~/DDS-Visualizer-Plugin/install/lib" >> ~/.bashrc && \
+RUN echo "source /DDS-Visualizer-Plugin/install/setup.bash" >> ~/.bashrc && \
+    echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/DDS-Visualizer-Plugin/install/lib" >> ~/.bashrc && \
     echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/opt/OpenDDS/lib:/opt/OpenDDS/ACE_wrappers/lib" >> ~/.bashrc && \
-    echo "export PATH=\$PATH:~/DDS-Visualizer-Plugin/install/bin" >> ~/.bashrc && \
+    echo "export PATH=\$PATH:/DDS-Visualizer-Plugin/install/bin" >> ~/.bashrc && \
     echo "export DDS_CONFIG_FILE=/usr/local/share/dds/rtps.ini" >> ~/.bashrc
 
 # Set environment variables for current session
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/root/DDS-Visualizer-Plugin/install/lib:/opt/OpenDDS/lib:/opt/OpenDDS/ACE_wrappers/lib"
-ENV PATH="${PATH}:/root/DDS-Visualizer-Plugin/install/bin"
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/DDS-Visualizer-Plugin/install/lib:/opt/OpenDDS/lib:/opt/OpenDDS/ACE_wrappers/lib"
+ENV PATH="${PATH}:/DDS-Visualizer-Plugin/install/bin"
 ENV DDS_CONFIG_FILE="/usr/local/share/dds/rtps.ini"
 
-# Set entrypoint and default command
-CMD ["plotjuggler"]
+# =============================================================================
+# Entry Point
+# =============================================================================
+CMD ["/bin/bash"]

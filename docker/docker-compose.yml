@@ -16,4 +16,3 @@ services:
     stdin_open: true
     tty: true
     # command: [ "bash" ]
-    command: ["plotjuggler"]
