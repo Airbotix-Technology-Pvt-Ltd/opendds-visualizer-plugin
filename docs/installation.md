@@ -1,89 +1,134 @@
+# OpenDDS Visualizer Plugin — Installation and Usage Guide
 
-# OpenDDS Visualizer Plugin - Installation and Usage Guide
+The **OpenDDS Visualizer Plugin** integrates with **PlotJuggler** to visualize DDS topic data in real time.
+This guide provides two installation methods: **Docker-based** (recommended) and **manual build from source**.
 
-## Prerequisites and Setup
+---
 
-When working in a minimal container environment, before installing `qt5-default` and `libqt5websockets5-dev`, you must first add the universe repository, as many Qt development packages are hosted there. This is why `software-properties-common` is required as the initial step.
+## 1. Docker-Based Installation (Recommended)
 
-### System Setup Instructions
+This method uses a Docker container to automatically handle all dependencies, environment variables, and build steps.
 
-Execute the following commands in sequence:
+### Steps
 
-```shell
-apt update
-apt install -y software-properties-common
-add-apt-repository universe
-apt update
+1. **Download and source the setup script**:
+
+```bash
+wget -O setup.sh https://raw.githubusercontent.com/Airbotix-Technology-Pvt-Ltd/opendds-visualizer-plugin/opendds/setup.sh
+source ./setup.sh
 ```
 
-### Install Qt Packages
+2. **Pull the latest PlotJuggler Docker setup**:
 
-After adding the universe repository, install the required Qt packages:
-
-```shell
-apt install -y qtbase5-dev libqt5websockets5-dev libqt5x11extras5-dev
+```bash
+plotjuggler pull
 ```
 
-### Install Additional Dependencies
+3. **Build the Docker image**:
 
-Install ASIO and TinyXML2 libraries:
-
-```shell
-apt install libasio-dev libtinyxml2-dev
+```bash
+plotjuggler build
 ```
 
-### Required Qt Packages Summary
+4. **Start the container**:
 
-To recap, the following Qt packages are essential for your container:
-
-* **qtbase5-dev** → Core Qt framework
-* **libqt5websockets5-dev** → WebSockets support
-* **libqt5x11extras5-dev** → X11 integration
-
-## Building the Plugin
-
-### Clone the plugin
-```
-git clone --recursive git@github.com:Airbotix-Technology-Pvt-Ltd/opendds-visualizer-plugin.git
-```
-### Install Build Tools
-
-First, install the required GCC compiler version:
-
-```shell
-apt install g++-11
+```bash
+plotjuggler start
 ```
 
-### Build Process
+5. **Launch PlotJuggler inside the container**:
 
-Build the plugin using colcon with specific compiler versions:
+```bash
+plotjuggler
+```
 
-```shell
+> The container includes all required Qt packages, OpenDDS libraries, and the OpenDDS Visualizer Plugin.
+
+---
+
+## 2. Manual Build from Source
+
+This method installs dependencies directly on your host and builds the plugin from source. Steps follow the Dockerfile as reference.
+
+### 2.1 Install Build Tools
+
+```bash
+sudo apt update
+sudo apt install -y g++ cmake python3-pip wget git
+pip3 install --upgrade colcon-common-extensions vcstool
+```
+
+> **Note on compilers:** While the instructions use `g++`, this project can also be built with `clang`.
+
+### 2.2 Install Qt Packages
+
+```bash
+sudo apt install -y qtbase5-dev libqt5websockets5-dev libqt5x11extras5-dev libqt5svg5-dev
+```
+
+### 2.3 Install Additional Libraries
+
+```bash
+sudo apt install -y libasio-dev libtinyxml2-dev libssl-dev
+```
+
+### 2.4 Install OpenDDS
+
+> Before building the plugin, you need to have OpenDDS installed on your system. You can find the installation instructions in the [OpenDDS Developer's Guide](https://opendds.readthedocs.io/en/latest/getting_started/index.html).
+
+### 2.5 Clone Plugin Repository and Pull Dependencies
+
+```bash
+git clone --recursive https://github.com/Airbotix-Technology-Pvt-Ltd/opendds-visualizer-plugin.git
+cd opendds-visualizer-plugin
+wget https://raw.githubusercontent.com/Airbotix-Technology-Pvt-Ltd/opendds-visualizer-plugin/opendds/opendds_visualizer_plugin.repos
+vcs import --recursive src < opendds_visualizer_plugin.repos
+```
+
+> `vcs` automatically pulls PlotJuggler and other dependencies.
+
+### 2.6 Build the Plugin
+
+```bash
 CC=/usr/bin/gcc-11 CXX=/usr/bin/g++-11 colcon build --cmake-args
 ```
 
-## Running PlotJuggler with OpenDDS Plugin
+### 2.7 Configure Environment Variables
 
-The `OpenDDS Visualizer Plugin` for PlotJuggler enables real-time visualization of data published on an OpenDDS network. It provides a seamless way to inspect and plot numeric and string data from your DDS topics.
+```bash
+source install/setup.bash
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:install/lib:/opt/OpenDDS/lib:/opt/OpenDDS/ACE_wrappers/lib
+export PATH=$PATH:install/bin
+export DDS_CONFIG_FILE=/usr/local/share/dds/rtps.ini
+```
 
-### Usage
+> Add these lines to `~/.bashrc` for persistence.
 
-1.  **Launch PlotJuggler:**
-    ```bash
-    plotjuggler
-    ```
-    If the build was completed using colcon, ensure you source all projects first:
-    ```bash
-    source install/setup.bash
-    ```
-    If the build was performed using CMake directly, extend the following environment variables with your installation `lib/` and `bin/` paths:
-    ```bash
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/install/lib
-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/OpenDDS/lib:/opt/OpenDDS/ACE_wrappers/lib
-    export PATH=$PATH:~/install/bin
-    ```
-2.  **Load the Plugin:** In PlotJuggler, navigate to `DataStreamer` -> `Load DataStreamer` and select `OpenDDS Visualizer Plugin`.
-3.  **Connect to DDS Domain:** A dialog will prompt you to enter the DDS Domain ID. Provide the correct ID and click `Connect`.
-4.  **Select Topics:** Another dialog will display a list of discovered DDS topics. Select the topics whose data you want to visualize and click `Start`.
+### 2.8 Create RTPS Configuration File (if you have not any)
 
-The plugin will then begin streaming the data from your chosen DDS topics, and you can configure PlotJuggler to display the desired fields.
+The `rtps.ini` file is used by OpenDDS to configure the transport protocol. The following command creates a basic configuration file that uses the RTPS protocol over UDP.
+
+```bash
+sudo mkdir -p /usr/local/share/dds
+cat << 'EOF' | sudo tee /usr/local/share/dds/rtps.ini > /dev/null
+[common]
+DCPSGlobalTransportConfig=$file
+DCPSDefaultDiscovery=DEFAULT_RTPS
+DCPSPendingTimeout=30
+
+[transport/the_rtps_transport]
+transport_type=rtps_udp
+EOF
+```
+
+### 2.9 Run PlotJuggler with the Plugin
+
+```bash
+plotjuggler -n --plugin_folders install/opendds_visualizer_plugin/bin/
+```
+
+1. Go to **DataStreamer → Load DataStreamer** and select **OpenDDS Visualizer Plugin**.
+2. Enter the DDS Domain ID and click **Connect**.
+3. Select the topics to visualize and click **Start**.
+
+---

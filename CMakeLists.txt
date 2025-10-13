@@ -1,22 +1,22 @@
-# Copyright 2022 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+# Copyright 2024 Airbotix Technology Pvt. Ltd.
 #
-# This file is part of eProsima Fast DDS Visualizer Plugin.
+# This file is part of OpenDDS Visualizer Plugin.
 #
-# eProsima Fast DDS Visualizer Plugin is free software: you can redistribute it and/or modify
+# OpenDDS Visualizer Plugin is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# eProsima Fast DDS Visualizer Plugin is distributed in the hope that it will be useful,
+# OpenDDS Visualizer Plugin is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with eProsima Fast DDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
+# along with OpenDDS Visualizer Plugin. If not, see <https://www.gnu.org/licenses/>.
 
 ###############################################################################
-# CMake build rules for Fast DDS Visualizer Plugin
+# CMake build rules for OpenDDS Visualizer Plugin
 ###############################################################################
 cmake_minimum_required(VERSION 3.5)
 cmake_policy(VERSION 3.5...3.13)
@@ -55,9 +55,9 @@ set(PROJECT_VERSION_MINOR "${PRODUCT_MINOR_VERSION}")
 set(PROJECT_VERSION_PATCH "${PRODUCT_PATCH_VERSION}")
 set(PROJECT_VERSION "${PRODUCT_VERSION_STR}")
 
-set(PROJECT_NAME_LARGE "Fast DDS Visualizer Plugin")
+set(PROJECT_NAME_LARGE "OpenDDS Visualizer Plugin")
 string(TOUPPER "${PROJECT_NAME}" PROJECT_NAME_UPPER)
-set(PROJECT_DESCRIPTION_SUMMARY "Plugin using Fast DDS library to subscribe to DDS data and plot it in plotjuggler")
+set(PROJECT_DESCRIPTION_SUMMARY "Plugin using OpenDDS library to subscribe to DDS data and plot it in plotjuggler")
 set(PROJECT_DESCRIPTION
     "${PROJECT_DESCRIPTION_SUMMARY}")
 
@@ -121,8 +121,8 @@ add_subdirectory( plugins/datastreamer_plugin )
 ###############################################################################
 # Test
 ###############################################################################
-option(BUILD_TESTS "Build Fast DDS Monitor appliction and documentation tests" OFF)
-option(BUILD_DOCUMENTATION_TESTS "Build Fast DDS Monitor documentation tests" OFF)
+option(BUILD_TESTS "Build OpenDDS Visualizer appliction and documentation tests" OFF)
+option(BUILD_DOCUMENTATION_TESTS "Build OpenDDS Visualizer documentation tests" OFF)
 
 if (BUILD_TESTS)
     set(BUILD_DOCUMENTATION_TESTS ON)
