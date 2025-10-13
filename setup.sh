@@ -142,8 +142,8 @@ HELP_EOF
 }
 
 # Add to .bashrc or .zshrc
-if ! grep -q "plotjuggler()" ~/.bashrc; then
+if ! grep -q "/opt/plotjuggler/setup.sh" ~/.bashrc; then
   echo "Adding 'plotjuggler' function to ~/.bashrc"
   plotjuggler pull
-  echo "source "/opt/plotjuggler/setup.sh"" >> ~/.bashrc
+  echo 'source /opt/plotjuggler/setup.sh' >> ~/.bashrc
 fi
