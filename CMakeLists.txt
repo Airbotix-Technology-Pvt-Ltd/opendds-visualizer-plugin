@@ -74,6 +74,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/modules)
 # Load external projects.
 ###############################################################################
 include_directories(thirdparty/nlohmann-json)
+include_directories(thirdparty/OpenDDW)
 
 ###############################################################################
 # System configuration

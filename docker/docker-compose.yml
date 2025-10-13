@@ -1,0 +1,15 @@
+services:
+  opendds-visulaizer-plugin:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: opendds-visualizer-plugin
+    container_name: plotjuggler
+    network_mode: host
+    privileged: true
+    environment:
+      - DISPLAY=${DISPLAY}
+      - XAUTHORITY=${XAUTHORITY:-$HOME/.Xauthority}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ${XAUTHORITY:-$HOME/.Xauthority}:/root/.Xauthority
