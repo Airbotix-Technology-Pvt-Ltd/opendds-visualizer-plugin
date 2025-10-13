@@ -1,0 +1,4 @@
+[submodule "plugins/datastreamer_plugin/thirdparty/OpenDDS"]
+    path = plugins/datastreamer_plugin/thirdparty/OpenDDS
+    url = https://github.com/OpenDDS/OpenDDS.git
+    branch = master

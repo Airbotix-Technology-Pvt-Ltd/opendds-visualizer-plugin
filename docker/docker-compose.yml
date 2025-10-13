@@ -13,3 +13,7 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - ${XAUTHORITY:-$HOME/.Xauthority}:/root/.Xauthority
+    stdin_open: true
+    tty: true
+    # command: [ "bash" ]
+    command: ["plotjuggler"]

@@ -5,7 +5,7 @@ repositories:
         url: https://github.com/facontidavide/PlotJuggler.git
         version: 3.9.1
 
-    fastdds_visualizer_plugin:
+    opendds_visualizer_plugin:
         type: git
         url: https://github.com/Airbotix-Technology-Pvt-Ltd/opendds-visualizer-plugin
         version: opendds
