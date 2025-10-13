@@ -1,28 +1,17 @@
 #!/bin/bash
-
-# setup.sh - PlotJuggler Setup Script
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPT_PATH="${SCRIPT_DIR}/$(basename "${BASH_SOURCE[0]}")"
-
-# Detect shell config file
-if [ -n "$ZSH_VERSION" ]; then
-    SHELL_RC="$HOME/.zshrc"
-elif [ -n "$BASH_VERSION" ]; then
-    SHELL_RC="$HOME/.bashrc"
-else
-    echo "Unsupported shell. Please add the function manually."
-    exit 1
-fi
-
-echo "Setting up PlotJuggler..."
-
-# Check if function already exists in shell rc
-if grep -q "plotjuggler()" "$SHELL_RC"; then
-    echo "PlotJuggler function already exists in $SHELL_RC"
-else
-    echo "Adding PlotJuggler function to $SHELL_RC"
-    cat >> "$SHELL_RC" << 'EOF'
+#
+# PlotJuggler Setup Script
+#
+# Usage:
+#   source ./setup.sh
+#   # or
+#   . ./setup.sh
+#
+# This will:
+#   1. Add plotjuggler function to your .bashrc/.zshrc
+#   2. Download required Docker files
+#   3. Make the function available immediately
+#
 
 # PlotJuggler Docker Function
 plotjuggler() {
@@ -42,23 +31,24 @@ plotjuggler() {
          plotjuggler -n --plugin_folders /DDS-Visualizer-Plugin/install/opendds_visualizer_plugin/bin/"
       ;;
 
-    setup)
-      if [ ! -d "$CMD_DIR" ]; then
-        echo "Setting up PlotJuggler..."
-        sudo mkdir -p "$CMD_DIR"
-      fi
+    pull)
+      echo "Pulling PlotJuggler..."
+      sudo rm -rf "$CMD_DIR"
+
+      echo "Setting up PlotJuggler..."
+      sudo mkdir -p "$CMD_DIR"
         
-      if [ ! -f "$CMD_DIR/docker-compose.yml" ]; then
-        # Download docker-compose.yml
-        sudo wget -O "$CMD_DIR/docker-compose.yml" \
-          https://raw.githubusercontent.com/Airbotix-Technology-Pvt-Ltd/opendds-visualizer-plugin/opendds/docker/docker-compose.yml
-      fi
-        
-      if [ ! -f "$CMD_DIR/Dockerfile" ]; then
-        # Download Dockerfile
-        sudo wget -O "$CMD_DIR/Dockerfile" \
-          https://raw.githubusercontent.com/Airbotix-Technology-Pvt-Ltd/opendds-visualizer-plugin/opendds/docker/Dockerfile
-      fi
+      # Download docker-compose.yml
+      sudo wget -O "$CMD_DIR/docker-compose.yml" \
+        https://raw.githubusercontent.com/Airbotix-Technology-Pvt-Ltd/opendds-visualizer-plugin/opendds/docker/docker-compose.yml
+
+      # Download Dockerfile
+      sudo wget -O "$CMD_DIR/Dockerfile" \
+        https://raw.githubusercontent.com/Airbotix-Technology-Pvt-Ltd/opendds-visualizer-plugin/opendds/docker/Dockerfile
+
+      # Download plotjuggler.sh
+      sudo wget -O "$CMD_DIR/setup.sh" \
+        https://raw.githubusercontent.com/Airbotix-Technology-Pvt-Ltd/opendds-visualizer-plugin/opendds/setup.sh
 
       echo "Setup complete at $CMD_DIR"
       ;;
@@ -121,7 +111,7 @@ Usage: plotjuggler [COMMAND]
 
 Commands:
   (none)    - Open PlotJuggler in running container
-  setup     - Setup PlotJuggler
+  pull     - Pull latest PlotJuggler
   build     - Build the Docker image
   rebuild   - Rebuild the Docker image (no cache)
   start     - Start PlotJuggler container
@@ -132,7 +122,7 @@ Commands:
 
 Examples:
   plotjuggler                    # open plotjuggler
-  plotjuggler setup              # Setup PlotJuggler
+  plotjuggler pull               # Pull latest PlotJuggler
   plotjuggler build              # Build the image
   plotjuggler rebuild            # Rebuild the image
   plotjuggler restart            # Restart the container
@@ -150,24 +140,10 @@ HELP_EOF
       ;;
   esac
 }
-EOF
-    echo "Function added to $SHELL_RC"
+
+# Add to .bashrc or .zshrc
+if ! grep -q "plotjuggler()" ~/.bashrc; then
+  echo "Adding 'plotjuggler' function to ~/.bashrc"
+  plotjuggler pull
+  echo "source "/opt/plotjuggler/setup.sh"" >> ~/.bashrc
 fi
-
-# Source the shell rc to make function available immediately
-echo "Sourcing $SHELL_RC..."
-source "$SHELL_RC"
-
-# Run plotjuggler setup
-echo ""
-echo "Running plotjuggler setup..."
-plotjuggler setup
-
-echo ""
-echo "Setup complete!"
-echo "You can now use 'plotjuggler' command in your terminal."
-echo ""
-echo "Quick start:"
-echo "  1. plotjuggler build   # Build the Docker image"
-echo "  2. plotjuggler start   # Start the container"
-echo "  3. plotjuggler         # Open PlotJuggler"
