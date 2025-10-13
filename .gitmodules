@@ -1,4 +1,4 @@
 [submodule "plugins/datastreamer_plugin/thirdparty/OpenDDW"]
     path = plugins/datastreamer_plugin/thirdparty/OpenDDW
-    url = https://github.com/OpenDDW/OpenDDW.git
+    url = https://github.com/OpenDDS/OpenDDW.git
     branch = master
