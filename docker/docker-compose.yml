@@ -1,5 +1,5 @@
 services:
-  opendds-visulaizer-plugin:
+  opendds-visualizer-plugin:
     build:
       context: .
       dockerfile: Dockerfile
@@ -15,4 +15,7 @@ services:
       - ${XAUTHORITY:-$HOME/.Xauthority}:/root/.Xauthority
     stdin_open: true
     tty: true
-    # command: [ "bash" ]
+    # command: "bash" # uncomment for debuuging inside docker
+    command: > # comment for debugging inside docker
+      bash -c "source /DDS-Visualizer-Plugin/install/setup.bash &&
+      plotjuggler -n --plugin_folders /DDS-Visualizer-Plugin/install/opendds_visualizer_plugin/bin/"
